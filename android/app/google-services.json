@@ -1,0 +1,119 @@
+{
+  "project_info": {
+    "project_number": "529879536502",
+    "firebase_url": "https://click-clinician-1551198098946.firebaseio.com",
+    "project_id": "click-clinician--1551198098946",
+    "storage_bucket": "click-clinician--1551198098946.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:529879536502:android:33b3162c1ae71145",
+        "android_client_info": {
+          "package_name": "com.clickclinician.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "529879536502-k0opmha5e6k2g75pd4p3j2l7hhslgcnh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBg_gdsit1qEKCsPPWfXLrRkPTL5wiW73E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "529879536502-k0opmha5e6k2g75pd4p3j2l7hhslgcnh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "529879536502-25sgju5kkcg7864s1crt11srl2o96a5q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.clickclinician.mobile"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:529879536502:android:59eed802f380e80e576057",
+        "android_client_info": {
+          "package_name": "com.clickclinician.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "529879536502-k0opmha5e6k2g75pd4p3j2l7hhslgcnh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBg_gdsit1qEKCsPPWfXLrRkPTL5wiW73E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "529879536502-k0opmha5e6k2g75pd4p3j2l7hhslgcnh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "529879536502-25sgju5kkcg7864s1crt11srl2o96a5q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.clickclinician.mobile"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:529879536502:android:992a155cdf3869a1576057",
+        "android_client_info": {
+          "package_name": "com.clickclinicians.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "529879536502-k0opmha5e6k2g75pd4p3j2l7hhslgcnh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBg_gdsit1qEKCsPPWfXLrRkPTL5wiW73E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "529879536502-k0opmha5e6k2g75pd4p3j2l7hhslgcnh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "529879536502-25sgju5kkcg7864s1crt11srl2o96a5q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.clickclinician.mobile"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
