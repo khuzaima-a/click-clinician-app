@@ -6,11 +6,13 @@
 // <date>JUNE 13, 2023</date>
 /////////////////////////////////////////////////////////
 
+import 'package:clickclinician/screens/map_screen.dart';
 import 'package:clickclinician/utility/color_file.dart';
 import 'package:clickclinician/utility/widget_file.dart';
 import 'package:clickclinician/widgets/const/custom_form_fields.dart';
 import 'package:clickclinician/widgets/snack_bar_notification.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../shared/api_calls.dart';
@@ -209,39 +211,49 @@ class SettingsScreenState extends State<SettingsScreen> {
                     body: SingleChildScrollView(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                              horizontal: 24.0, vertical: 36.0),
+                            horizontal: 24.0, vertical: 48.0),
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    IconButton(
-                                      icon: Container(
-                                          padding: const EdgeInsets.all(6.0),
-                                          decoration: const BoxDecoration(
-                                            color: Color.fromARGB(
-                                                54, 119, 121, 124),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: const Icon(Icons.arrow_back)),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const MapScreen()));
                                       },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.10),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Icon(
+                                              Icons.arrow_back_ios_new_rounded,
+                                              color: Colors.black,
+                                              size: 16),
+                                        ),
+                                      ),
                                     ),
                                     const Text(
                                       "Settings",
                                       style: TextStyle(
-                                          fontSize: 18.0,
+                                          fontSize: 16.0,
                                           fontWeight: FontWeight.bold),
                                     ),
                                   ]),
                               DesignWidgets.addVerticalSpace(24.0),
                               _buildProfileForm(context),
-                              const SizedBox(
-                                height: 16.0,
-                              ),
+                              // const SizedBox(
+                              //   height: 16.0,
+                              // ),
                               // Row(
                               //   mainAxisAlignment: MainAxisAlignment.start,
                               //   children: [
@@ -344,7 +356,7 @@ class SettingsScreenState extends State<SettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildProfileInfo(context),
-          const SizedBox(height: 16.0),
+          // const SizedBox(height: 16.0),
         ],
       ),
     );
@@ -355,66 +367,93 @@ class SettingsScreenState extends State<SettingsScreen> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // Box 1
-        Container(
-          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-          decoration: BoxDecoration(
-            border: Border.all(
-                width: 1, color: const Color.fromARGB(167, 158, 158, 158)),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          child: Theme(
-            data: ThemeData(dividerColor: Colors.transparent),
-            child: ExpansionTile(
-              title: const Text(
-                'Settings',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Stack(
+          children: [
+            Positioned(
+              top: -120,
+              right: -45,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: Colors.lightBlue.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
               ),
-              maintainState: true,
-              initiallyExpanded: true,
-              tilePadding: const EdgeInsets.only(left: 8.0, right: 8.0),
-              childrenPadding: const EdgeInsets.all(8.0),
-              children: [
-                DesignWidgets.addVerticalSpace(4.0),
-                // buildFullWidthFormField('Name', _nameController, 'Name',
-                //     _nameEntered, 'Enter Name', true),
-                // buildFullWidthFormField('Email', _emailController, 'Email',
-                //     _isEmailValid, 'Add Valid Email', true),
-                buildFullWidthFormField(
-                    'Filte Radius',
-                    _filterRadiusController,
-                    'Filter Radius (in miles)',
-                    true,
-                    '',
-                    false,
-                    filterRadiusFocusNode,
-                    filterRadiosFillColor),
-                buildFullWidthFormField(
-                    'Filter Zip Code',
-                    _zipcodeFilterController,
-                    'Filter Zip Code',
-                    true,
-                    '',
-                    false,
-                    zipCodeFocusNode,
-                    zipCodeFillColor),
-                DesignWidgets.addVerticalSpace(12.0),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              decoration: BoxDecoration(
+                border:
+                    Border.all(width: 1, color: Colors.blue.withOpacity(0.4)),
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: Theme(
+                data: ThemeData(dividerColor: Colors.transparent),
+                child: ExpansionTile(
+
+                  title:  Row(children: [
+                    // color: Color.fromARGB(206, 170, 172, 178),
+                    SvgPicture.asset(
+                      "assets/images/setting_icon.svg",
+                      color: Color.fromARGB(206, 170, 172, 178),
+                      width: 20,
+                      height: 20,
+                    ),
+                    DesignWidgets.addHorizontalSpace(12),
+                    const Text(
+                      'Settings',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ]),
+                  maintainState: true,
+                  initiallyExpanded: true,
+                  tilePadding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  childrenPadding: const EdgeInsets.all(8.0),
                   children: [
-                    _buildFilterCheckbox(),
-                    DesignWidgets.addVerticalSpace(8.0),
-                    // const SizedBox(
-                    //   height: 16.0,
-                    // ),
-                    // _buildNotificationCheckbox(),
+                    DesignWidgets.addVerticalSpace(4.0),
+                    // buildFullWidthFormField('Name', _nameController, 'Name',
+                    //     _nameEntered, 'Enter Name', true),
+                    // buildFullWidthFormField('Email', _emailController, 'Email',
+                    //     _isEmailValid, 'Add Valid Email', true),
+                    buildFullWidthFormField(
+                        'Filte Radius',
+                        _filterRadiusController,
+                        'Filter Radius (in miles)',
+                        true,
+                        '',
+                        false,
+                        filterRadiusFocusNode,
+                        filterRadiosFillColor),
+                    buildFullWidthFormField(
+                        'Filter Zip Code',
+                        _zipcodeFilterController,
+                        'Filter Zip Code',
+                        true,
+                        '',
+                        false,
+                        zipCodeFocusNode,
+                        zipCodeFillColor),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _buildFilterCheckbox(),
+                        DesignWidgets.addVerticalSpace(16.0),
+                        // const SizedBox(
+                        //   height: 16.0,
+                        // ),
+                        // _buildNotificationCheckbox(),
+                      ],
+                    ),
                   ],
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
-        const SizedBox(height: 16.0),
+        const SizedBox(height: 24.0),
         DesignWidgets.getButton(
           text: "Save",
           onTap: () {
@@ -427,9 +466,9 @@ class SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildFilterCheckbox() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           'Is Filter Enabled',
@@ -439,46 +478,35 @@ class SettingsScreenState extends State<SettingsScreen> {
             fontSize: 16.0,
           ),
         ),
-        const SizedBox(width: 8.0),
-        InkWell(
-          onTap: () {
-            setState(() {
-              _filterEnabled = !_filterEnabled;
-            });
-          },
-          child: Container(
-            height: 30.0,
-            width: 60.0,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20.0),
-              border: Border.all(
-                color: _filterEnabled
-                    ? ColorsUI.primaryColor
-                    : ColorsUI.backgroundColor,
-                width: 2.0,
+        DesignWidgets.addVerticalSpace(8.0),
+        Row(
+          children: [
+            Expanded(
+              child: DesignWidgets.getRadioButtonWithIcon(
+                title: "Yes",
+                iconPath: "assets/images/tick_icon.svg",
+                isSelected: _filterEnabled,
+                onTap: () {
+                  setState(() {
+                    _filterEnabled = true;
+                  });
+                },
               ),
-              color: _filterEnabled
-                  ? ColorsUI.primaryColor
-                  : ColorsUI.backgroundColor,
             ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                AnimatedPositioned(
-                  duration: Duration(milliseconds: 200),
-                  left: _filterEnabled ? 30.0 : 5.0,
-                  child: Container(
-                    width: 20.0,
-                    height: 20.0,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
+            DesignWidgets.addHorizontalSpace(16.0),
+            Expanded(
+              child: DesignWidgets.getRadioButtonWithIcon(
+                title: "No",
+                iconPath: "assets/images/cross_icon.svg",
+                isSelected: !_filterEnabled,
+                onTap: () {
+                  setState(() {
+                    _filterEnabled = false;
+                  });
+                },
+              ),
             ),
-          ),
+          ],
         ),
       ],
     );

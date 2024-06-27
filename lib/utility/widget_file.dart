@@ -28,17 +28,34 @@ class DesignWidgets {
     return Container(
       margin: margin > 0 ? EdgeInsets.all(margin) : null,
       width: double.infinity,
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(4, 4),
+          ),
+        ],
+      ),
       child: ElevatedButton(
         onPressed: disabled ? () {} : onTap,
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
           foregroundColor: foregroundColor,
+          padding: const EdgeInsets.symmetric(vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadios),
           ),
         ),
         child: !isLoading
-            ? Text(text)
+            ? Text(
+                text,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              )
             : const SizedBox(
                 height: 12,
                 width: 12,
@@ -57,7 +74,7 @@ class DesignWidgets {
       width: double.infinity,
       child: Column(
         children: [
-         const Padding(
+          const Padding(
             padding: const EdgeInsets.only(top: 72.0),
             child: Center(
                 child: Icon(
@@ -148,6 +165,86 @@ class DesignWidgets {
           )
         ],
       ),
+    );
+  }
+
+  static Widget getRadioButtonWithIcon(
+      {required String title,
+      required bool isSelected,
+      required String iconPath,
+      required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 48,
+        padding: const EdgeInsets.only(left: 10, right: 4),
+        decoration: BoxDecoration(
+          color: isSelected ? ColorsUI.primaryColor.withOpacity(0.2) : Colors.white,
+          borderRadius: BorderRadius.circular(12.0),
+          border: Border.all(
+            color: ColorsUI.primaryColor,
+            width: 1.0,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              children: [
+                SvgPicture.asset(
+                  iconPath,
+                  width: 24,
+                  height: 24,
+                  color:  ColorsUI.primaryColor,
+                ),
+                DesignWidgets.addHorizontalSpace(2.0),
+              ],
+            ),
+            Expanded(
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                style: CustomStyles.radioButtonText,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  static Widget profileImageDisplay({double radius = 80}) {
+    return Stack(
+      children: [
+        CircleAvatar(
+          radius: radius,
+          backgroundColor: ColorsUI.backgroundColor,
+        ),
+        CircleAvatar(
+          radius: radius,
+          backgroundColor: ColorsUI.backgroundColor,
+          child: SvgPicture.asset(
+            "assets/images/profile_dummy.svg",
+            height: radius * 2,
+            width: radius * 2,
+          ),
+        ),
+        Positioned(
+          bottom: 16,
+          right: 16,
+          child: CircleAvatar(
+            radius: radius / 4.5,
+            backgroundColor: Colors.blue,
+            child: const Icon(
+              Icons.mode_edit_outline_outlined,
+              color: Colors.white,
+              size: 20,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 class ColorsUI {
   static const Color primaryColor = Colors.blue;
-  static const Color lightPrimary = Color.fromRGBO(207, 238, 238, 1);
+  static const Color lightPrimary = Color.fromARGB(255, 147, 191, 228);
   static const Color backgroundColor = Color.fromRGBO(244, 240, 235, 0.678);
   static const Color backgroundColorLight = Color.fromRGBO(245, 245, 245, 1);
   static const Color darkBorder = Color.fromRGBO(170, 172, 178, 1);

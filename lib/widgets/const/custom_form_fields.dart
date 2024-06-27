@@ -117,9 +117,13 @@ Widget buildFullWidthFormField(
     children: [
       Text(
         label,
-        style: CustomStyles.subHeadingText,
+        style:  TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 15,
+          color: focusMode.hasFocus ? ColorsUI.primaryColor : ColorsUI.headingColor,
+        )
       ),
-      DesignWidgets.addVerticalSpace(8),
+      DesignWidgets.addVerticalSpace(4),
       TextField(
         controller: controller,
         focusNode: focusMode,
@@ -149,7 +153,7 @@ Widget buildFullWidthFormField(
               : const OutlineInputBorder(),
         ),
       ),
-      const SizedBox(height: 16.0),
+      const SizedBox(height: 24.0),
     ],
   );
 }
@@ -176,11 +180,14 @@ Widget buildCustomStatesDropdownFormField(
     children: [
       Text(
         label,
-        style: CustomStyles.subHeadingText,
+         style:  TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 15,
+          color:  ColorsUI.headingColor,
+        ),
       ),
-      DesignWidgets.addVerticalSpace(8),
+      DesignWidgets.addVerticalSpace(4),
       Container(
-        // padding: EdgeInsets.symmetric(vertical: 16.0),
         decoration: BoxDecoration(
           color: ColorsUI.backgroundColor,
           borderRadius: BorderRadius.circular(16.0),
@@ -189,6 +196,7 @@ Widget buildCustomStatesDropdownFormField(
           decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
             border: OutlineInputBorder(
+              borderSide: BorderSide.none,
               borderRadius: BorderRadius.circular(16.0),
             ),
           ),
@@ -206,7 +214,7 @@ Widget buildCustomStatesDropdownFormField(
           },
         ),
       ),
-      SizedBox(height: 16.0),
+      SizedBox(height: 24.0),
     ],
   );
 }

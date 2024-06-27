@@ -237,11 +237,11 @@ class MapScreenState extends State<MapScreen> {
             (BuildContext context, AsyncSnapshot<CameraPosition> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Scaffold(
-                    backgroundColor: Colors.white,
-                    body: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  ); // Display a loading indicator
+              backgroundColor: Colors.white,
+              body: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ); // Display a loading indicator
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}'); // Display an error message
           } else {
@@ -274,7 +274,7 @@ class MapScreenState extends State<MapScreen> {
                       width: double.infinity,
                       height: 600,
                       child: GoogleMap(
-                        mapType: MapType.normal,
+                        mapType: MapType.terrain,
                         initialCameraPosition: cameraPosition ?? _cameraDefault,
                         myLocationButtonEnabled: true,
                         gestureRecognizers: <Factory<

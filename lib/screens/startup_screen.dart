@@ -6,17 +6,18 @@
 // <date>MAY 29, 2023</date>
 /////////////////////////////////////////////////////////
 
+import 'package:clickclinician/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../data/shared_preferences.dart';
 import '../shared/api_calls.dart';
 import 'login_screen.dart';
 import 'map_screen.dart';
+import 'profile_screen.dart';
 
 class StartupScreen extends StatefulWidget {
   const StartupScreen({super.key});
 
-  static const String routeName = '/';
 
   @override
   State<StartupScreen> createState() => StartupScreenState();

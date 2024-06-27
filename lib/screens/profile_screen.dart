@@ -6,6 +6,7 @@
 // <date>JUNE 13, 2023</date>
 /////////////////////////////////////////////////////////
 
+import 'package:clickclinician/screens/map_screen.dart';
 import 'package:clickclinician/utility/color_file.dart';
 import 'package:clickclinician/utility/widget_file.dart';
 import 'package:clickclinician/widgets/const/custom_form_fields.dart';
@@ -186,7 +187,7 @@ class ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    nameFocusNode.addListener(_onEmailFocusChange);
+    nameFocusNode.addListener(_onNameFocusChange);
     emailFocusNode.addListener(_onEmailFocusChange);
     phoneNumberFocusNode.addListener(_onPhoneNumberFocusChange);
     addressFocusNode.addListener(_onAddressFocusChange);
@@ -373,34 +374,44 @@ class ProfileScreenState extends State<ProfileScreen> {
                       child: SingleChildScrollView(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 24.0, vertical: 36.0),
+                              horizontal: 24.0, vertical: 48.0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    IconButton(
-                                      icon: Container(
-                                          padding: const EdgeInsets.all(6.0),
-                                          decoration: const BoxDecoration(
-                                            color: Color.fromARGB(
-                                                54, 119, 121, 124),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: const Icon(Icons.arrow_back)),
-                                      onPressed: () {
+                                    GestureDetector(
+                                      onTap: () {
                                         Navigator.of(context).pop();
                                       },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.10),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Icon(
+                                              Icons.arrow_back_ios_new_rounded,
+                                              color: Colors.black,
+                                              size: 16),
+                                        ),
+                                      ),
                                     ),
                                     const Text(
                                       "Edit Profile",
                                       style: TextStyle(
-                                          fontSize: 18.0,
+                                          fontSize: 16.0,
                                           fontWeight: FontWeight.bold),
                                     ),
                                   ]),
+                              Center(
+                                child: DesignWidgets.profileImageDisplay(
+                                    radius: 60),
+                              ),
                               DesignWidgets.addVerticalSpace(24.0),
                               _buildProfileForm(context),
                               const SizedBox(
@@ -422,7 +433,7 @@ class ProfileScreenState extends State<ProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildProfileInfo(context),
-          const SizedBox(height: 16.0),
+          // const SizedBox(height: 16.0),
           // _buildChangePassword(context),
         ],
       ),
@@ -434,122 +445,176 @@ class ProfileScreenState extends State<ProfileScreen> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // Box 1
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          decoration: BoxDecoration(
-            border: Border.all(
-                width: 1, color: const Color.fromARGB(167, 158, 158, 158)),
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          child: Theme(
-            data: ThemeData(dividerColor: Colors.transparent),
-            child: ExpansionTile(
-              title: const Text(
-                'Basic Information',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Stack(
+          children: [
+            Positioned(
+              top: -120,
+              right: -45,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: Colors.lightBlue.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
               ),
-              maintainState: true,
-              initiallyExpanded: true,
-              tilePadding: const EdgeInsets.only(left: 8.0, right: 8.0),
-              childrenPadding: const EdgeInsets.all(8.0),
-              children: [
-                DesignWidgets.addVerticalSpace(4.0),
-                buildFullWidthFormField(
-                    'Name',
-                    _nameController,
-                    'Name',
-                    _nameEntered,
-                    'Enter Name',
-                    true,
-                    nameFocusNode,
-                    nameFillColor),
-                buildFullWidthFormField(
-                    'Email',
-                    _emailController,
-                    'Email',
-                    _isEmailValid,
-                    'Add Valid Email',
-                    true,
-                    emailFocusNode,
-                    emailFillColor),
-                buildFullWidthFormField(
-                    'Phone Number',
-                    _phoneNumberController,
-                    'Phone Number',
-                    _phoneNumberAdded,
-                    'Add Valid Number',
-                    true,
-                    phoneNumberFocusNode,
-                    phoneNumberFillColor),
-                DesignWidgets.addVerticalSpace(4.0),
-              ],
             ),
-          ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              decoration: BoxDecoration(
+                border:
+                    Border.all(width: 1, color: Colors.blue.withOpacity(0.4)),
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: Theme(
+                data: ThemeData(dividerColor: Colors.transparent),
+                child: ExpansionTile(
+                  title: Row(children: [
+                    const Icon(
+                      Icons.account_box_rounded,
+                      color: Color.fromARGB(206, 170, 172, 178),
+                    ),
+                    DesignWidgets.addHorizontalSpace(12),
+                    const Text(
+                      'Basic Information',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ]),
+                  maintainState: true,
+                  initiallyExpanded: true,
+                  tilePadding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  childrenPadding: const EdgeInsets.all(8.0),
+                  children: [
+                    DesignWidgets.addVerticalSpace(4.0),
+                    buildFullWidthFormField(
+                        'Name',
+                        _nameController,
+                        'Name',
+                        _nameEntered,
+                        'Enter Name',
+                        true,
+                        nameFocusNode,
+                        nameFillColor),
+                    buildFullWidthFormField(
+                        'Email',
+                        _emailController,
+                        'Email',
+                        _isEmailValid,
+                        'Add Valid Email',
+                        true,
+                        emailFocusNode,
+                        emailFillColor),
+                    buildFullWidthFormField(
+                        'Phone Number',
+                        _phoneNumberController,
+                        'Phone Number',
+                        _phoneNumberAdded,
+                        'Add Valid Number',
+                        true,
+                        phoneNumberFocusNode,
+                        phoneNumberFillColor),
+                    DesignWidgets.addVerticalSpace(4.0),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
         DesignWidgets.addVerticalSpace(24.0),
         // Box 2
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          decoration: BoxDecoration(
-            border: Border.all(
-                width: 1, color: const Color.fromARGB(167, 158, 158, 158)),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          child: Theme(
-            data: ThemeData(dividerColor: Colors.transparent),
-            child: ExpansionTile(
-              title: const Text(
-                'Address',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Stack(
+          children: [
+            Positioned(
+              top: -115,
+              right: -45,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: Colors.lightBlue.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
               ),
-              maintainState: true,
-              initiallyExpanded: true,
-              tilePadding: const EdgeInsets.only(left: 8.0, right: 8.0),
-              childrenPadding: const EdgeInsets.all(8.0),
-              children: [
-                DesignWidgets.addVerticalSpace(4.0),
-                buildFullWidthFormField(
-                    'Address',
-                    _addressController,
-                    'Street Address',
-                    _addressAdded,
-                    'Enter Address',
-                    true,
-                    addressFocusNode,
-                    addressFillColor),
-                buildFullWidthFormField(
-                    'Address 2',
-                    _address2Controller,
-                    'Suite/Apt/House Number',
-                    true,
-                    '',
-                    false,
-                    address2FocusNode,
-                    address2FillColor),
-                buildFullWidthFormField('City', _cityController, 'City',
-                    _cityAdded, 'Add City', true, cityFocusNode, cityFillColor),
-                buildCustomStatesDropdownFormField('State', _selectedState,
-                    (newVlue) {
-                  setState(() {
-                    _selectedState = newVlue!;
-                  });
-                }),
-                const SizedBox(height: 16.0),
-                buildFullWidthFormField(
-                    'Zipcode',
-                    _zipcodeController,
-                    'Zipcode',
-                    _zipAdded,
-                    'Enter Zip Code',
-                    true,
-                    zipcodeFocusNode,
-                    zipcodeFillColor),
-                DesignWidgets.addVerticalSpace(4.0),
-              ],
             ),
-          ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              decoration: BoxDecoration(
+                border:
+                    Border.all(width: 1, color: Colors.blue.withOpacity(0.4)),
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: Theme(
+                data: ThemeData(dividerColor: Colors.transparent),
+                child: ExpansionTile(
+                  title: Row(children: [
+                    const Icon(
+                      Icons.location_on_outlined,
+                      color: ColorsUI.darkBorder,
+                    ),
+                    DesignWidgets.addHorizontalSpace(12.0),
+                    const Text(
+                      'Address',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ]),
+                  maintainState: true,
+                  initiallyExpanded: true,
+                  tilePadding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  childrenPadding: const EdgeInsets.all(8.0),
+                  children: [
+                    DesignWidgets.addVerticalSpace(4.0),
+                    buildFullWidthFormField(
+                        'Address',
+                        _addressController,
+                        'Street Address',
+                        _addressAdded,
+                        'Enter Address',
+                        true,
+                        addressFocusNode,
+                        addressFillColor),
+                    buildFullWidthFormField(
+                        'Address 2',
+                        _address2Controller,
+                        'Suite/Apt/House Number',
+                        true,
+                        '',
+                        false,
+                        address2FocusNode,
+                        address2FillColor),
+                    buildFullWidthFormField(
+                        'City',
+                        _cityController,
+                        'City',
+                        _cityAdded,
+                        'Add City',
+                        true,
+                        cityFocusNode,
+                        cityFillColor),
+                    buildCustomStatesDropdownFormField('State', _selectedState,
+                        (newVlue) {
+                      setState(() {
+                        _selectedState = newVlue!;
+                      });
+                    }),
+                    buildFullWidthFormField(
+                        'Zipcode',
+                        _zipcodeController,
+                        'Zipcode',
+                        _zipAdded,
+                        'Enter Zip Code',
+                        true,
+                        zipcodeFocusNode,
+                        zipcodeFillColor),
+                    DesignWidgets.addVerticalSpace(4.0),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 16.0),
+        const SizedBox(height: 24.0),
 
         DesignWidgets.getButton(
             text: "Save",
@@ -565,57 +630,78 @@ class ProfileScreenState extends State<ProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          decoration: BoxDecoration(
-            border: Border.all(
-                width: 1, color: const Color.fromARGB(167, 158, 158, 158)),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          child: Theme(
-            data: ThemeData(dividerColor: Colors.transparent),
-            child: ExpansionTile(
-              title: const Text(
-                'Password',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Stack(
+          children: [
+            Positioned(
+              top: -115,
+              right: -45,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: Colors.lightBlue.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
               ),
-              maintainState: true,
-              initiallyExpanded: true,
-              tilePadding: const EdgeInsets.only(left: 8.0, right: 8.0),
-              childrenPadding: const EdgeInsets.all(8.0),
-              children: [
-                DesignWidgets.addVerticalSpace(4.0),
-                buildFullWidthFormField(
-                    'Current Password',
-                    _currentPasswordController,
-                    'Current password',
-                    _currentPassword,
-                    'Please Enter Correct Password',
-                    true,
-                    currentPasswordFocusNode,
-                    currentPasswordFillColor),
-                buildFullWidthFormField(
-                    'New Password',
-                    _newPasswordController,
-                    'New password',
-                    true,
-                    '',
-                    false,
-                    newPasswordFocusNode,
-                    newPasswordFillColor),
-                buildFullWidthFormField(
-                    'Confirm Password',
-                    _confirmPasswordController,
-                    'Confirm new password',
-                    _confirmPassword,
-                    'Please enter the same password',
-                    _currentPasswordController.text.isNotEmpty ? true : false,
-                    confirmPasswordFocusNode,
-                    confirmPasswordFillColor),
-                DesignWidgets.addVerticalSpace(4.0),
-              ],
             ),
-          ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              decoration: BoxDecoration(
+                border:
+                    Border.all(width: 1, color: Colors.blue.withOpacity(0.4)),
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: Theme(
+                data: ThemeData(dividerColor: Colors.transparent),
+                child: ExpansionTile(
+                  title: const Text(
+                    'Password',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  maintainState: true,
+                  initiallyExpanded: true,
+                  tilePadding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  childrenPadding: const EdgeInsets.all(8.0),
+                  children: [
+                    DesignWidgets.addVerticalSpace(4.0),
+                    buildFullWidthFormField(
+                        'Current Password',
+                        _currentPasswordController,
+                        'Current password',
+                        _currentPassword,
+                        'Please Enter Correct Password',
+                        true,
+                        currentPasswordFocusNode,
+                        currentPasswordFillColor),
+                    buildFullWidthFormField(
+                        'New Password',
+                        _newPasswordController,
+                        'New password',
+                        true,
+                        '',
+                        false,
+                        newPasswordFocusNode,
+                        newPasswordFillColor),
+                    buildFullWidthFormField(
+                        'Confirm Password',
+                        _confirmPasswordController,
+                        'Confirm new password',
+                        _confirmPassword,
+                        'Please enter the same password',
+                        _currentPasswordController.text.isNotEmpty
+                            ? true
+                            : false,
+                        confirmPasswordFocusNode,
+                        confirmPasswordFillColor),
+                    DesignWidgets.addVerticalSpace(4.0),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 16.0),
         DesignWidgets.getButton(
