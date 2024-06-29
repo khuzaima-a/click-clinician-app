@@ -176,4 +176,12 @@ class CustomStyles {
     color: Colors.white,
     fontFamily: "inter",
   );
+
+  static TextStyle legalHeading = const TextStyle(
+      fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.black);
+
+  static TextStyle legalPara =
+      const TextStyle(fontSize: 15.0, color: Colors.black,
+      
+      );
 }

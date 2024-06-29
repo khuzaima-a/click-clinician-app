@@ -6,6 +6,7 @@
 // <date>MAY 29, 2023</date>
 /////////////////////////////////////////////////////////
 
+import 'package:clickclinician/screens/legal_screen.dart';
 import 'package:clickclinician/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
 

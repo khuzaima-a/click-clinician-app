@@ -179,7 +179,9 @@ class DesignWidgets {
         height: 48,
         padding: const EdgeInsets.only(left: 10, right: 4),
         decoration: BoxDecoration(
-          color: isSelected ? ColorsUI.primaryColor.withOpacity(0.2) : Colors.white,
+          color: isSelected
+              ? ColorsUI.primaryColor.withOpacity(0.2)
+              : Colors.white,
           borderRadius: BorderRadius.circular(12.0),
           border: Border.all(
             color: ColorsUI.primaryColor,
@@ -196,7 +198,7 @@ class DesignWidgets {
                   iconPath,
                   width: 24,
                   height: 24,
-                  color:  ColorsUI.primaryColor,
+                  color: ColorsUI.primaryColor,
                 ),
                 DesignWidgets.addHorizontalSpace(2.0),
               ],
@@ -214,6 +216,18 @@ class DesignWidgets {
     );
   }
 
+  static Widget getParagraph({required String text, double padding = 32.0}) {
+    return Column(
+      children: [
+        Text(
+          text,
+          style: CustomStyles.legalPara,
+          textAlign: TextAlign.justify,
+        ),
+        DesignWidgets.addVerticalSpace(padding),
+      ],
+    );
+  }
 
   static Widget profileImageDisplay({double radius = 80}) {
     return Stack(
@@ -245,6 +259,38 @@ class DesignWidgets {
           ),
         ),
       ],
+    );
+  }
+
+  static Widget getList(List<String> items) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: items.map((item) => listItem(item)).toList(),
+    );
+  }
+
+  static Widget listItem(String item) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(right: 12, top: 4),
+            width: 6,
+            height: 6,
+            decoration: const BoxDecoration(
+              color: Colors.black,
+              shape: BoxShape.circle
+            ),
+            child: null,
+          ),
+          Expanded(
+            child: Text(item, style: CustomStyles.legalPara),
+          ),
+        ],
+      ),
     );
   }
 }
