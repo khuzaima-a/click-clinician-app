@@ -45,4 +45,5 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/map_styles.json
 #    - assets/well-known/assetlinks.json

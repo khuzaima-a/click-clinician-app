@@ -214,82 +214,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Stack(
-                                children: [
-                                  Container(
-                                    width: displayWidth(context),
-                                    padding: const EdgeInsets.fromLTRB(
-                                        24, 24, 24, 24),
-                                    decoration: BoxDecoration(
-                                      color: ColorsUI.primaryColor
-                                          .withOpacity(0.4),
-                                      borderRadius: const BorderRadius.vertical(
-                                        bottom: Radius.circular(24),
-                                      ),
-                                    ),
-                                    child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.black
-                                                    .withOpacity(0.10),
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: const Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Icon(
-                                                    Icons
-                                                        .arrow_back_ios_new_rounded,
-                                                    color: Colors.black,
-                                                    size: 16),
-                                              ),
-                                            ),
-                                          ),
-                                          const Text(
-                                            "Settings",
-                                            style: TextStyle(
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ]),
-                                  ),
-                                  Positioned(
-                                    top: -25,
-                                    right: 40,
-                                    child: Container(
-                                      width: 100,
-                                      height: 100,
-                                      decoration: const BoxDecoration(
-                                        color:
-                                            Color.fromARGB(75, 255, 255, 255),
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                    bottom: -70,
-                                    left: 70,
-                                    child: Container(
-                                      width: 130,
-                                      height: 130,
-                                      decoration: const BoxDecoration(
-                                        color:
-                                            Color.fromARGB(75, 255, 255, 255),
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              DesignWidgets.addVerticalSpace(16.0),
+                              DesignWidgets.getAppBar(context, "Settings"),
                               Padding(
                                 padding: const EdgeInsets.all(24.0),
                                 child: _buildProfileForm(context),
@@ -512,14 +437,12 @@ class SettingsScreenState extends State<SettingsScreen> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Is Filter Enabled',
-          style: TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.bold,
-            fontSize: 16.0,
-          ),
-        ),
+        const Text('Is Filter Enabled',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 15,
+              color: ColorsUI.headingColor,
+            )),
         DesignWidgets.addVerticalSpace(8.0),
         Row(
           children: [

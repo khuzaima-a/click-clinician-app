@@ -1,4 +1,5 @@
 import 'package:clickclinician/utility/style_file.dart';
+import 'package:clickclinician/utility/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:clickclinician/utility/color_file.dart';
 import 'package:flutter_svg/svg.dart';
@@ -232,25 +233,23 @@ class DesignWidgets {
   static Widget profileImageDisplay({double radius = 80}) {
     return Stack(
       children: [
-        CircleAvatar(
-          radius: radius,
-          backgroundColor: ColorsUI.backgroundColor,
-        ),
-        CircleAvatar(
-          radius: radius,
-          backgroundColor: ColorsUI.backgroundColor,
+        Container(
+          decoration: BoxDecoration(
+            color: ColorsUI.primaryColor.withOpacity(0.7),
+            shape: BoxShape.circle,
+          ),
           child: SvgPicture.asset(
             "assets/images/profile_dummy.svg",
-            height: radius * 2,
-            width: radius * 2,
+            height: (radius - 2) * 2,
+            width: (radius - 2) * 2,
           ),
         ),
         Positioned(
-          bottom: 16,
-          right: 16,
+          bottom: 14,
+          right: 14,
           child: CircleAvatar(
             radius: radius / 4.5,
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.amber,
             child: const Icon(
               Icons.mode_edit_outline_outlined,
               color: Colors.white,
@@ -281,9 +280,7 @@ class DesignWidgets {
             width: 6,
             height: 6,
             decoration: const BoxDecoration(
-              color: Colors.black,
-              shape: BoxShape.circle
-            ),
+                color: Colors.black, shape: BoxShape.circle),
             child: null,
           ),
           Expanded(
@@ -291,6 +288,81 @@ class DesignWidgets {
           ),
         ],
       ),
+    );
+  }
+
+  static Widget getAppBar(BuildContext context, String pageTitle,
+      {bool isMapScreen = false, GlobalKey<ScaffoldState>? scaffoldKey}) {
+    return Stack(
+      children: [
+        Container(
+          width: displayWidth(context),
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+          decoration: const BoxDecoration(
+            color: ColorsUI.primaryColor,
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(20),
+            ),
+          ),
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    isMapScreen
+                        ? scaffoldKey!.currentState?.openDrawer()
+                        : Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.25),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: isMapScreen
+                          ? const Icon(Icons.menu_open_sharp, color: Colors.white,
+                              size: 16)
+                          : const Icon(Icons.arrow_back_ios_new_rounded,
+                              color: Colors.white, size: 16),
+                    ),
+                  ),
+                ),
+                Text(
+                  pageTitle,
+                  style: const TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                ),
+              ]),
+        ),
+        Positioned(
+          top: -35,
+          right: 100,
+          child: Container(
+            width: 80,
+            height: 80,
+            decoration: const BoxDecoration(
+              color: Color.fromARGB(75, 255, 255, 255),
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: -80,
+          left: 60,
+          child: Container(
+            width: 120,
+            height: 120,
+            decoration: const BoxDecoration(
+              color: Color.fromARGB(75, 255, 255, 255),
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

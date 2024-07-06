@@ -11,6 +11,8 @@ import 'dart:ui';
 import 'package:clickclinician/screens/service_req_tabs_screen.dart';
 import 'package:clickclinician/shared/firebase.dart';
 import 'package:clickclinician/shared/notifications_services.dart';
+import 'package:clickclinician/utility/utils.dart';
+import 'package:clickclinician/utility/widget_file.dart';
 import 'package:clickclinician/widgets/popup_menus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -18,6 +20,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 import '../shared/api_calls.dart';
 import '../shared/device_info.dart';
@@ -48,9 +51,12 @@ class MapScreen extends StatefulWidget {
 
 class MapScreenState extends State<MapScreen> {
   late GoogleMapController _mapController;
+  late String _mapStyleString;
 
   final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
   final NotificationServices notificationServices = NotificationServices();
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   static final List<Marker> _markers = <Marker>[];
   static final List<Circle> _circles = <Circle>[];
@@ -221,6 +227,10 @@ class MapScreenState extends State<MapScreen> {
           zoom: _cameraDefault.zoom),
     );
 
+    rootBundle.loadString('assets/map_styles.json').then((string) {
+      _mapStyleString = string;
+    });
+
     super.initState();
     // ApiCalls.whoami(context);
   }
@@ -247,182 +257,154 @@ class MapScreenState extends State<MapScreen> {
           } else {
             CameraPosition? cameraPosition = snapshot.data;
 
-            return Scaffold(
-              floatingActionButton: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.lightBlue,
-                    foregroundColor: Colors.white),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ServiceRequestsScreen()));
-                },
-                child: const Text('Service Requests'),
-              ),
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerFloat,
-              backgroundColor: Colors.white,
-              appBar: getAppBar(),
-              drawer: _navigationBar,
-              body: SingleChildScrollView(
-                child: Column(children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 1.0),
-                    child: Center(
-                        child: SizedBox(
-                      width: double.infinity,
-                      height: 600,
-                      child: GoogleMap(
-                        mapType: MapType.terrain,
-                        initialCameraPosition: cameraPosition ?? _cameraDefault,
-                        myLocationButtonEnabled: true,
-                        gestureRecognizers: <Factory<
-                            OneSequenceGestureRecognizer>>{
-                          Factory<OneSequenceGestureRecognizer>(
-                            () => EagerGestureRecognizer(),
-                          ),
-                        },
-                        onMapCreated: (controller) {
-                          _mapController = controller;
-                        },
-                        markers: Set<Marker>.of(_markers),
-                        circles: Set<Circle>.of(_circles),
-                        compassEnabled: true,
-                        onTap: (val) {
-                          print('value in map screen press: $val');
-                        },
-                        myLocationEnabled: true,
+            return SafeArea(
+              child: Scaffold(
+                key: _scaffoldKey,
+                // floatingActionButton: ElevatedButton(
+                //   style: ElevatedButton.styleFrom(
+                //       backgroundColor: Colors.lightBlue,
+                //       foregroundColor: Colors.white),
+                //   onPressed: () {
+                //     Navigator.push(
+                //         context,
+                //         MaterialPageRoute(
+                //             builder: (context) => ServiceRequestsScreen()));
+                //   },
+                //   child: const Text('Service Requests'),
+                // ),
+                // floatingActionButtonLocation:
+                //     FloatingActionButtonLocation.centerFloat,
+                backgroundColor: Colors.white,
+                drawer: _navigationBar,
+                body: SingleChildScrollView(
+                  child: Stack(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        height: MediaQuery.of(context).size.height -
+                            MediaQuery.of(context).padding.top,
+                        child: GoogleMap(
+                          mapType: MapType.terrain,
+                          initialCameraPosition:
+                              cameraPosition ?? _cameraDefault,
+                          myLocationButtonEnabled: true,
+                          gestureRecognizers: <Factory<
+                              OneSequenceGestureRecognizer>>{
+                            Factory<OneSequenceGestureRecognizer>(
+                              () => EagerGestureRecognizer(),
+                            ),
+                          },
+                          onMapCreated: (GoogleMapController controller) {
+                            _mapController = controller;
+                            _mapController.setMapStyle(_mapStyleString);
+                          },
+                          markers: Set<Marker>.of(_markers),
+                          circles: Set<Circle>.of(_circles),
+                          compassEnabled: true,
+                          onTap: (val) {
+                            print('value in map screen press: $val');
+                          },
+                          myLocationEnabled: true,
+                        ),
                       ),
-                    )),
+                      Positioned(
+                        top: 24,
+                        left: 24,
+                        child: GestureDetector(
+                          onTap: () {
+                            _scaffoldKey.currentState!.openDrawer();
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.25),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Icon(Icons.menu_open_sharp,
+                                  color: Colors.white, size: 20),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 32,
+                        left: 16,
+                        child: Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                _setCamera(_cameraAustin);
+                              },
+                              child: Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.25),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    "Au",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            DesignWidgets.addVerticalSpace(12.0),
+                            GestureDetector(
+                              onTap: () {
+                                _setCamera(_cameraSanAntonio);
+                              },
+                              child: Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.25),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    "SA",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            DesignWidgets.addVerticalSpace(12.0),
+                            GestureDetector(
+                              onTap: () {
+                                _setCamera(_cameraVictoria);
+                              },
+                              child: Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.25),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    "Vic",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ]),
-              ),
-              bottomNavigationBar: BottomAppBar(
-                color: Colors.blue,
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.lightBlue,
-                              foregroundColor: Colors.white),
-                          onPressed: () {
-                            --markerIndex;
-                            if (markerIndex < 0) {
-                              markerIndex = _markers.length - 1;
-                            }
-
-                            if (markerIndex >= 0 &&
-                                _markers.length > markerIndex) {
-                              var marker = _markers[markerIndex];
-                              CameraPosition position = CameraPosition(
-                                  target: marker.position, zoom: 14);
-                              _setCamera(position);
-                            }
-                          },
-                          child: const Text('<'),
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.lightBlue,
-                              foregroundColor: Colors.white),
-                          onPressed: () {
-                            _setCamera(_cameraAustin);
-                          },
-                          child: const Text('Au'),
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.lightBlue,
-                              foregroundColor: Colors.white),
-                          onPressed: () {
-                            _setCamera(_cameraSanAntonio);
-                          },
-                          child: const Text('SA'),
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.lightBlue,
-                              foregroundColor: Colors.white),
-                          onPressed: () {
-                            _setCamera(_cameraVictoria);
-                          },
-                          child: const Text('Vic'),
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.lightBlue,
-                              foregroundColor: Colors.white),
-                          onPressed: () {
-                            ++markerIndex;
-                            if (markerIndex >= _markers.length) {
-                              markerIndex = 0;
-                            }
-
-                            if (markerIndex >= 0 &&
-                                _markers.length > markerIndex) {
-                              var marker = _markers[markerIndex];
-                              CameraPosition position = CameraPosition(
-                                  target: marker.position, zoom: 14);
-                              _setCamera(position);
-                            }
-                          },
-                          child: const Text('>'),
-                        )
-                      ],
-                    ),
-                    // const SizedBox(
-                    //   height: 4.0,
-                    // ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: [
-                    //     ElevatedButton(
-                    //       style: ElevatedButton.styleFrom(
-                    //           backgroundColor: Colors.lightBlue,
-                    //           foregroundColor: Colors.white),
-                    //       onPressed: () {
-                    //         --markerIndex;
-                    //         if (markerIndex < 0) {
-                    //           markerIndex = _markers.length - 1;
-                    //         }
-
-                    //         if (markerIndex >= 0 &&
-                    //             _markers.length > markerIndex) {
-                    //           var marker = _markers[markerIndex];
-                    //           CameraPosition position = CameraPosition(
-                    //               target: marker.position, zoom: 14);
-                    //           _setCamera(position);
-                    //         }
-                    //       },
-                    //       child: const Text('<'),
-                    //     ),
-                    //     ElevatedButton(
-                    //       style: ElevatedButton.styleFrom(
-                    //           backgroundColor: Colors.lightBlue,
-                    //           foregroundColor: Colors.white),
-                    //       onPressed: () {
-                    //         ++markerIndex;
-                    //         if (markerIndex >= _markers.length) {
-                    //           markerIndex = 0;
-                    //         }
-
-                    //         if (markerIndex >= 0 &&
-                    //             _markers.length > markerIndex) {
-                    //           var marker = _markers[markerIndex];
-                    //           CameraPosition position = CameraPosition(
-                    //               target: marker.position, zoom: 14);
-                    //           _setCamera(position);
-                    //         }
-                    //       },
-                    //       child: const Text('>'),
-                    //     )
-                    //   ],
-                    // )
-                  ],
                 ),
               ),
             );
