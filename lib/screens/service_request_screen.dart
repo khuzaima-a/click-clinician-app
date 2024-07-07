@@ -7,18 +7,14 @@
 /////////////////////////////////////////////////////////
 
 import 'package:clickclinician/screens/accepted_requests_screen.dart';
-import 'package:clickclinician/screens/service_req_tabs_screen.dart';
 import 'package:clickclinician/utility/color_file.dart';
 import 'package:clickclinician/utility/style_file.dart';
 import 'package:clickclinician/utility/utils.dart';
 import 'package:clickclinician/utility/widget_file.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../shared/api_calls.dart';
-import '../widgets/nav_drawer.dart';
-import '../widgets/popup_menus.dart';
-import '../widgets/shared.dart';
+
 
 class ServiceRequestsScreen extends StatefulWidget {
   final bool? fromTab;
@@ -68,7 +64,7 @@ class ServiceRequestScreenState extends State<ServiceRequestsScreen> {
         : SafeArea(
             child: Scaffold(
               backgroundColor: Colors.white,
-              body: !ApiCalls.acceptedServiceRequests!.isEmpty
+              body: ApiCalls.acceptedServiceRequests!.isEmpty
                   ? RefreshIndicator(
                       onRefresh: () => _refreshServiceRequests(context),
                       child: Center(
@@ -194,30 +190,30 @@ class ServiceRequestScreenState extends State<ServiceRequestsScreen> {
                             child: ListView.builder(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 16.0),
-                              itemCount: 2,
+                              itemCount:
+                                  ApiCalls.acceptedServiceRequests?.length ?? 0,
                               itemBuilder: (BuildContext context, int index) {
                                 return Padding(
                                   padding: const EdgeInsets.only(bottom: 12.0),
                                   child: InkWell(
                                     splashColor: Colors.blue.withOpacity(0.3),
                                     onTap: () {
-                                      // var request = ApiCalls
-                                      //     .acceptedServiceRequests?[index];
-                                      // if (request != null) {
-                                      // showServiceRequestPopup(context, request);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const AcceptedRequestsScreen(
-                                                  requestId:
-                                                      "0039a9e5-e7cc-4058-8562-f47457d5db28"
-                                                  // Assuming AcceptedRequestsScreen accepts a requestId parameter
-                                                  ),
-                                        ),
-                                      );
-                                      //65c1d5562747c56fd806ed21, 65c1d5852747c56fd806ed63, 65c1d5ba2747c56fd806eda5
-                                      // }
+                                      var request = ApiCalls
+                                          .acceptedServiceRequests?[index];
+                                      if (request != null) {
+                                        // showServiceRequestPopup(context, request);
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                AcceptedRequestsScreen(
+                                                    requestId: request.id
+                                                    // Assuming AcceptedRequestsScreen accepts a requestId parameter
+                                                    ),
+                                          ),
+                                        );
+                                        //65c1d5562747c56fd806ed21, 65c1d5852747c56fd806ed63, 65c1d5ba2747c56fd806eda5
+                                      }
                                     },
                                     child: Stack(
                                       children: [
@@ -239,7 +235,8 @@ class ServiceRequestScreenState extends State<ServiceRequestsScreen> {
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 8.0, vertical: 8.0),
                                           decoration: BoxDecoration(
-                                            color: ColorsUI.primaryColor.withOpacity(0.05),
+                                            color: ColorsUI.primaryColor
+                                                .withOpacity(0.05),
                                             border: Border.all(
                                                 width: 1,
                                                 color: Colors.blue
@@ -487,14 +484,6 @@ class ServiceRequestScreenState extends State<ServiceRequestsScreen> {
                                               //         ),
                                               //       ],
                                               //     )),
-                                              // _buildText('Name', "Khuzaima Ahmed",
-                                              //     index, context),
-                                              // _buildText('Priority',
-                                              //     "Priority Here", index, context),
-                                              // _buildText(
-                                              //     'Gender', 'M', index, context),
-                                              // _buildText(
-                                              //     'Age', "23", index, context),
 
                                               Row(
                                                 children: [
@@ -518,9 +507,19 @@ class ServiceRequestScreenState extends State<ServiceRequestsScreen> {
                                                           MainAxisAlignment
                                                               .start,
                                                       children: [
-                                                        const Text(
-                                                          "Khuzaima Ahmed",
-                                                          style: TextStyle(
+                                                        Text(
+                                                          ApiCalls
+                                                                      .acceptedServiceRequests?[
+                                                                          index]
+                                                                      .patientFirstName ==
+                                                                  ''
+                                                              ? 'N/A'
+                                                              : ApiCalls
+                                                                  .acceptedServiceRequests![
+                                                                      index]
+                                                                  .patientFirstName!,
+                                                          style:
+                                                              const TextStyle(
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: 20,
@@ -547,7 +546,11 @@ class ServiceRequestScreenState extends State<ServiceRequestsScreen> {
                                                                 .addHorizontalSpace(
                                                                     4.0),
                                                             Text(
-                                                              "5 - 5 Days",
+                                                              ApiCalls
+                                                                      .acceptedServiceRequests?[
+                                                                          index]
+                                                                      .priority ??
+                                                                  '',
                                                               style: TextStyle(
                                                                 fontSize: 14,
                                                                 color: ColorsUI
@@ -582,9 +585,18 @@ class ServiceRequestScreenState extends State<ServiceRequestsScreen> {
                                                                         .circular(
                                                                             8.0),
                                                               ),
-                                                              child: const Text(
-                                                                  "Male",
-                                                                  style: TextStyle(
+                                                              child: Text(
+                                                                  ApiCalls.acceptedServiceRequests?[index].patientSex !=
+                                                                          null
+                                                                      ? (ApiCalls.acceptedServiceRequests?[index].patientSex) ==
+                                                                              2
+                                                                          ? 'O'
+                                                                          : (ApiCalls.acceptedServiceRequests?[index].patientSex) ==
+                                                                                  1
+                                                                              ? 'Male'
+                                                                              : 'Female'
+                                                                      : 'N/A',
+                                                                  style: const TextStyle(
                                                                       fontSize:
                                                                           14,
                                                                       color: Colors
@@ -612,9 +624,12 @@ class ServiceRequestScreenState extends State<ServiceRequestsScreen> {
                                                                         .circular(
                                                                             8.0),
                                                               ),
-                                                              child: const Text(
-                                                                  "23 Y/O",
-                                                                  style: TextStyle(
+                                                              child: Text(
+                                                                  (ApiCalls.acceptedServiceRequests?[index].patientAge != null
+                                                                          ? "${ApiCalls.acceptedServiceRequests?[index].patientAge} Y/O"
+                                                                          : 'N/A')
+                                                                      .toString(),
+                                                                  style: const TextStyle(
                                                                       fontSize:
                                                                           14,
                                                                       color: Colors

@@ -562,8 +562,8 @@ class ApiCalls {
       'grant_type': 'password',
       'client_id': 'owner',
       'client_secret': 'fancyawesome',
-      'username': "roberto@lunivate.com",
-      'password': "click!",
+      'username': username,
+      'password': password,
     };
 
     try {
