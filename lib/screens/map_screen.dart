@@ -309,7 +309,7 @@ class MapScreenState extends State<MapScreen> {
                       ),
                       Positioned(
                         top: 24,
-                        left: 24,
+                        left: 16,
                         child: GestureDetector(
                           onTap: () {
                             _scaffoldKey.currentState!.openDrawer();

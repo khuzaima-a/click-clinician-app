@@ -44,18 +44,7 @@ class NavDrawer extends StatelessWidget {
                 child: Column(
                   children: [
                     DesignWidgets.divider(),
-                    DesignWidgets.profileItem(
-                      "Map Screen",
-                      "",
-                      Icons.location_on_outlined,
-                      () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MapScreen()));
-                      },
-                    ),
-                    DesignWidgets.divider(),
+                    
                     DesignWidgets.profileItem(
                       "My Service Requests",
                       "assets/images/services.svg",

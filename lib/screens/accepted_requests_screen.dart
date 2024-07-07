@@ -7,15 +7,14 @@
 /////////////////////////////////////////////////////////
 
 import 'package:clickclinician/shared/api_calls.dart';
+import 'package:clickclinician/utility/color_file.dart';
+import 'package:clickclinician/utility/widget_file.dart';
 import 'package:clickclinician/widgets/const/custom_form_fields.dart';
-import 'package:clickclinician/widgets/nav_drawer.dart';
-import 'package:clickclinician/widgets/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class AcceptedRequestsScreen extends StatefulWidget {
   const AcceptedRequestsScreen({super.key, this.requestId});
-  static const String routeName = "/acceptedRequestsScreen";
   final String? requestId;
 
   @override
@@ -23,7 +22,14 @@ class AcceptedRequestsScreen extends StatefulWidget {
 }
 
 class _AcceptedRequestsScreenState extends State<AcceptedRequestsScreen> {
-  Object? requestId = [];
+  String? requestId;
+
+  @override
+  void initState() {
+    super.initState();
+    requestId = widget.requestId;
+  }
+
   bool _isLoading = false;
 
   String? specialNotes;
@@ -60,16 +66,9 @@ class _AcceptedRequestsScreenState extends State<AcceptedRequestsScreen> {
   String? serviceRequestType;
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
-  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Move this line to didChangeDependencies()
-    requestId = ModalRoute.of(context)!.settings.arguments;
     fetchData(context);
   }
 
@@ -80,7 +79,7 @@ class _AcceptedRequestsScreenState extends State<AcceptedRequestsScreen> {
     });
     if (requestId != '') {
       var json =
-          await ApiCalls.getAcceptedRequestData(requestId as String, context);
+          await ApiCalls.getAcceptedRequestData(requestId.toString(), context);
       debugPrint('called accepted api: $json');
 
       if (json != null) {
@@ -139,11 +138,7 @@ class _AcceptedRequestsScreenState extends State<AcceptedRequestsScreen> {
               : DateFormat.yMd()
                   .add_jm()
                   .format((DateTime.parse(json['CreatedOn']).toLocal()));
-          // if (createdOn.toString().isNotEmpty) {
-          //   DateTime? date = DateTime.parse(createdOn!);
-          //   String displayDate = "${date.month}/${date.day}/${date.year}";
-          //   createdOn = displayDate;
-          // }
+
           canBePassed = json['CanBePassed'];
           createdDateTimeUTC = json['CreatedDateTimeUTC'] == null
               ? null
@@ -161,48 +156,58 @@ class _AcceptedRequestsScreenState extends State<AcceptedRequestsScreen> {
         'request ID in accepted request page from arguments: $requestId');
     return _isLoading
         ? const Scaffold(
-                    backgroundColor: Colors.white,
-                    body: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-        : Scaffold(
-            backgroundColor: Colors.grey[200], // Changed background color
-            appBar: getAppBar(
-                isBack: true, tabName: 'Accepted Service Request Details'),
-            drawer: const NavDrawer(),
-            body: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Card(
-                elevation: 5.0,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ListView(
-                    // crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // const Text(
-                      //   'Accepted Service Request Details',
-                      //   style: TextStyle(
-                      //     fontSize: 24, // Increased font size
-                      //     fontWeight: FontWeight.bold,
-                      //   ),
-                      // ),
-                      // const SizedBox(height: 16.0),
-                      buildDetailItem(
-                          'Name', '$patientFirstName $patientLastName'),
-                      buildDetailItem('Gender', gender ?? 'N/A'),
-                      buildDetailItem('Age', patientAge?.toString() ?? 'N/A'),
-                      buildDetailItem('Number', phoneNumber ?? 'N/A'),
-                      buildDetailItem('Priority', priority ?? 'N/A'),
-                      buildDetailItem('Special Note', specialNotes ?? 'N/A'),
-                      buildDetailItem('Status',
-                          (serviceRequestType ?? 'N/A').toUpperCase()),
-                      buildDetailItem(
-                          'Accepted By', acceptingTherapistName ?? 'N/A'),
-                      buildDetailItem('Address', addressLine1 ?? 'N/A'),
-                      buildDetailItem('Created On', createdOn ?? 'N/A'),
-                    ],
-                  ),
+            backgroundColor: Colors.white,
+            body: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          )
+        : SafeArea(
+            child: Scaffold(
+              backgroundColor: Colors.white,
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    DesignWidgets.getAppBar(context, "Request Details"),
+                    Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0, vertical: 8.0),
+                            decoration: BoxDecoration(
+                              color: ColorsUI.primaryColor.withOpacity(0.05),
+                              border: Border.all(
+                                  width: 1,
+                                  color: Colors.blue.withOpacity(0.4)),
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            child: Column(children: [
+                              buildDetailItem(
+                                  'Name', '$patientFirstName $patientLastName'),
+                              const Divider(),
+                              buildDetailItem('Gender', gender ?? 'N/A'),
+                              const Divider(),
+                              buildDetailItem(
+                                  'Age', patientAge?.toString() ?? 'N/A'),
+                              const Divider(),
+                              buildDetailItem('Number', phoneNumber ?? 'N/A'),
+                              const Divider(),
+                              buildDetailItem('Priority', priority ?? 'N/A'),
+                              const Divider(),
+                              buildDetailItem(
+                                  'Special Note', specialNotes ?? 'N/A'),
+                              const Divider(),
+                              buildDetailItem('Status',
+                                  (serviceRequestType ?? 'N/A').toUpperCase()),
+                              const Divider(),
+                              buildDetailItem('Accepted By',
+                                  acceptingTherapistName ?? 'N/A'),
+                              const Divider(),
+                              buildDetailItem('Address', addressLine1 ?? 'N/A'),
+                              const Divider(),
+                              buildDetailItem('Created On', createdOn ?? 'N/A'),
+                            ]))),
+                  ],
                 ),
               ),
             ),

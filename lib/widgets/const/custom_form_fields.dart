@@ -566,23 +566,24 @@ Widget buildField(
 }
 
 Widget buildDetailItem(String title, String data) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        title,
-        style: const TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 18,
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+            color: ColorsUI.headingColor
+          ),
         ),
-      ),
-      const SizedBox(height: 4.0),
-      Text(
-        data,
-        style: const TextStyle(fontSize: 16),
-      ),
-      const Divider(), // Divider between items
-      const SizedBox(height: 8.0), // Added spacing between items
-    ],
+        Text(
+          data,
+          style: TextStyle(fontSize: 15, color: ColorsUI.headingColor.withOpacity(0.7)),
+        ),
+      ],
+    ),
   );
 }

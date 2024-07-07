@@ -7,7 +7,7 @@
 /////////////////////////////////////////////////////////
 
 import 'package:clickclinician/screens/legal_screen.dart';
-import 'package:clickclinician/screens/settings_screen.dart';
+import 'package:clickclinician/screens/service_request_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../data/shared_preferences.dart';
