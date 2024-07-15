@@ -5,9 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:clickclinician/utility/color_file.dart';
 import 'package:clickclinician/utility/widget_file.dart';
 import 'package:clickclinician/utility/style_file.dart';
-import 'package:clickclinician/utility/utils.dart';
 
-import '../data/shared_preferences.dart';
 import '../shared/api_calls.dart';
 import '../shared/firebase.dart';
 
@@ -20,35 +18,36 @@ class SignupScreen extends StatefulWidget {
 }
 
 class SignupState extends State<SignupScreen> {
-  final SPSettings _settings = SPSettings();
-  final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
+  final TextEditingController _firstNameController = TextEditingController();
+  final FocusNode firstNameFocusNode = FocusNode();
+  Color firstNameFillColor = ColorsUI.backgroundColor;
+  bool _firstNameEntered = true;
+
+  final TextEditingController _lastNameController = TextEditingController();
+  final FocusNode lastNameFocusNode = FocusNode();
+  Color lastNameFillColor = ColorsUI.backgroundColor;
+  bool _lastNameEntered = true;
 
   final TextEditingController _emailController = TextEditingController();
   final FocusNode emailFocusNode = FocusNode();
   Color emailFillColor = ColorsUI.backgroundColor;
   bool _emailEntered = true;
 
-  final TextEditingController _passwordController = TextEditingController();
-  final FocusNode passwordFocusNode = FocusNode();
-  Color passwordFillColor = ColorsUI.backgroundColor;
-  Color passwordIconColor = ColorsUI.lightHeading;
-  bool _passEntered = true;
-  bool hidePassword = true;
+  final TextEditingController _phoneController = TextEditingController();
+  final FocusNode phoneFocusNode = FocusNode();
+  Color phoneFillColor = ColorsUI.backgroundColor;
 
-  final TextEditingController _nameController = TextEditingController();
-  final FocusNode nameFocusNode = FocusNode();
-  Color nameFillColor = ColorsUI.backgroundColor;
+  final TextEditingController _zipCodeController = TextEditingController();
+  final FocusNode zipCodeFocusNode = FocusNode();
+  Color zipCodeFillColor = ColorsUI.backgroundColor;
 
   bool _isLoading = false;
   int userType = 1;
 
-  void _onPasswordFocusChange() {
+  void _onPhoneFocusChange() {
     setState(() {
-      passwordFillColor =
-          passwordFocusNode.hasFocus ? Colors.white : ColorsUI.backgroundColor;
-      passwordIconColor = passwordFocusNode.hasFocus
-          ? ColorsUI.primaryColor
-          : ColorsUI.lightHeading;
+      phoneFillColor =
+          phoneFocusNode.hasFocus ? Colors.white : ColorsUI.backgroundColor;
     });
   }
 
@@ -59,10 +58,24 @@ class SignupState extends State<SignupScreen> {
     });
   }
 
-  void _onNameFocusChange() {
+  void _onFirstNameFocusChange() {
     setState(() {
-      nameFillColor =
-          nameFocusNode.hasFocus ? Colors.white : ColorsUI.backgroundColor;
+      firstNameFillColor =
+          firstNameFocusNode.hasFocus ? Colors.white : ColorsUI.backgroundColor;
+    });
+  }
+
+  void _onLastNameFocusChange() {
+    setState(() {
+      lastNameFillColor =
+          lastNameFocusNode.hasFocus ? Colors.white : ColorsUI.backgroundColor;
+    });
+  }
+
+  void _onZipCodeFocusChange() {
+    setState(() {
+      zipCodeFillColor =
+          zipCodeFocusNode.hasFocus ? Colors.white : ColorsUI.backgroundColor;
     });
   }
 
@@ -76,7 +89,7 @@ class SignupState extends State<SignupScreen> {
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(top: 80.0),
+              padding: const EdgeInsets.only(top: 48.0),
               child: Center(
                 child: SizedBox(
                     width: 160,
@@ -100,20 +113,20 @@ class SignupState extends State<SignupScreen> {
                   ),
                   DesignWidgets.addVerticalSpace(24),
                   Text(
-                    "Full Name",
+                    "First Name*",
                     style: CustomStyles.subHeadingText,
                   ),
                   DesignWidgets.addVerticalSpace(8),
                   Stack(
                     children: [
                       TextField(
-                        controller: _nameController,
-                        focusNode: nameFocusNode,
+                        controller: _firstNameController,
+                        focusNode: firstNameFocusNode,
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
-                          hintText: "Enter your full name",
+                          hintText: "Enter your first name",
                           filled: true,
-                          fillColor: nameFillColor,
+                          fillColor: firstNameFillColor,
                           contentPadding:
                               const EdgeInsets.fromLTRB(16, 0, 100, 8),
                           hintStyle: CustomStyles.paragraphSubText,
@@ -133,7 +146,40 @@ class SignupState extends State<SignupScreen> {
                   ),
                   DesignWidgets.addVerticalSpace(24),
                   Text(
-                    "Email Address",
+                    "Last Name*",
+                    style: CustomStyles.subHeadingText,
+                  ),
+                  DesignWidgets.addVerticalSpace(8),
+                  Stack(
+                    children: [
+                      TextField(
+                        controller: _lastNameController,
+                        focusNode: lastNameFocusNode,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          hintText: "Enter your last name",
+                          filled: true,
+                          fillColor: lastNameFillColor,
+                          contentPadding:
+                              const EdgeInsets.fromLTRB(16, 0, 100, 8),
+                          hintStyle: CustomStyles.paragraphSubText,
+                          alignLabelWithHint: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(
+                                color: ColorsUI.primaryColor, width: 2.0),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  DesignWidgets.addVerticalSpace(24),
+                  Text(
+                    "Primary Email*",
                     style: CustomStyles.subHeadingText,
                   ),
                   DesignWidgets.addVerticalSpace(8),
@@ -166,22 +212,20 @@ class SignupState extends State<SignupScreen> {
                   ),
                   DesignWidgets.addVerticalSpace(24),
                   Text(
-                    "Password",
+                    "Primary Phone",
                     style: CustomStyles.subHeadingText,
                   ),
                   DesignWidgets.addVerticalSpace(8),
                   Stack(
                     children: [
                       TextField(
-                        enableSuggestions: false,
-                        obscureText: hidePassword,
-                        controller: _passwordController,
-                        focusNode: passwordFocusNode,
+                        controller: _phoneController,
+                        focusNode: phoneFocusNode,
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
-                          hintText: "Enter password",
+                          hintText: "Enter your phone number",
                           filled: true,
-                          fillColor: passwordFillColor,
+                          fillColor: phoneFillColor,
                           contentPadding:
                               const EdgeInsets.fromLTRB(16, 0, 100, 8),
                           hintStyle: CustomStyles.paragraphSubText,
@@ -197,21 +241,36 @@ class SignupState extends State<SignupScreen> {
                           ),
                         ),
                       ),
-                      Positioned(
-                        right: 16,
-                        top: 4,
-                        bottom: 4,
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              hidePassword = !hidePassword;
-                            });
-                          },
-                          child: Icon(
-                            hidePassword
-                                ? Icons.lock_outline_rounded
-                                : Icons.lock_open_rounded,
-                            color: passwordIconColor,
+                    ],
+                  ),
+                  DesignWidgets.addVerticalSpace(24),
+                  Text(
+                    "Zip Code",
+                    style: CustomStyles.subHeadingText,
+                  ),
+                  DesignWidgets.addVerticalSpace(8),
+                  Stack(
+                    children: [
+                      TextField(
+                        controller: _zipCodeController,
+                        focusNode: zipCodeFocusNode,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          hintText: "Enter your zip code",
+                          filled: true,
+                          fillColor: zipCodeFillColor,
+                          contentPadding:
+                              const EdgeInsets.fromLTRB(16, 0, 100, 8),
+                          hintStyle: CustomStyles.paragraphSubText,
+                          alignLabelWithHint: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(
+                                color: ColorsUI.primaryColor, width: 2.0),
                           ),
                         ),
                       ),
@@ -224,23 +283,30 @@ class SignupState extends State<SignupScreen> {
                       text: "Sign up",
                       onTap: () {
                         String email = _emailController.text;
-                        String password = _passwordController.text;
+                        String firstName = _firstNameController.text;
+                        String lastName = _lastNameController.text;
 
                         setState(() {
                           _emailEntered = email.isNotEmpty &&
                               RegExp(r'\S+@\S+\.\S+').hasMatch(email);
-                          _passEntered = password.isNotEmpty;
+                          _firstNameEntered = firstName.isNotEmpty;
+                          _lastNameEntered = lastName.isNotEmpty;
                         });
                         try {
-                          if (!_emailEntered || !_passEntered) {
+                          if (!_emailEntered ||
+                              !_firstNameEntered ||
+                              !_lastNameEntered) {
                             return;
                           }
-                          ApiCalls.login(email, password, context, (loading) {
+                          ApiCalls.login(email, firstName, context, (loading) {
                             setState(() {
                               _isLoading = loading;
                             });
                           }).then((String result) {
-                            _settings.setPassword(_passwordController.text);
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return LoginScreen();
+                            }));
                           });
                         } catch (e) {
                           debugPrint('error while logging in: $e');
@@ -263,6 +329,7 @@ class SignupState extends State<SignupScreen> {
                       ),
                     ),
                   ),
+                  DesignWidgets.addVerticalSpace(24),
                 ],
               ),
             )
@@ -278,80 +345,20 @@ class SignupState extends State<SignupScreen> {
   void initState() {
     super.initState();
     _isLoading = false;
-    passwordFocusNode.addListener(_onPasswordFocusChange);
     emailFocusNode.addListener(_onEmailFocusChange);
-
-    _emailController.text = _settings.getUserName() ?? '';
-    _passwordController.text = _settings.getPassword() ?? '';
-
-    var token = _settings.getDeviceToken();
-    var registeredDevice = _settings.getRegisteredDevice();
-    _getCurrentPosition(context).then((_) => {
-          // if (token == null || token == '')
-          //   {
-          //     FirebaseMessenger.requestNotificationPermission(),
-          //     FirebaseMessenger.registerDeviceForNotifications().then((value) {
-          //       if (token != null && token != '' && registeredDevice == false) {
-          //         _settings.setDeviceToken(value!);
-          //         ApiCalls.deviceToken = value;
-          //       }
-          //     })
-          //   }
-        });
-
-    if (token == null || token == '') {
-      FirebaseMessenger.requestNotificationPermission();
-      FirebaseMessenger.registerDeviceForNotifications().then((value) {
-        if (token != null && token != '' && registeredDevice == false) {
-          _settings.setDeviceToken(value!);
-          ApiCalls.deviceToken = value;
-        }
-      });
-    }
-  }
-
-  Future<bool> _handlePermission() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Test if location services are enabled.
-    serviceEnabled = await _geolocatorPlatform.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return false;
-    }
-
-    permission = await _geolocatorPlatform.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await _geolocatorPlatform.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return false;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return false;
-    }
-
-    return true;
-  }
-
-  Future<Position> _getCurrentPosition(BuildContext context) async {
-    final hasPermission = await _handlePermission();
-
-    if (!hasPermission) {
-      debugPrint('permission denied');
-      showSnackBar(context, 'Location permission denied', SnackbarColors.error);
-    }
-
-    return await _geolocatorPlatform.getCurrentPosition(
-        locationSettings:
-            const LocationSettings(accuracy: LocationAccuracy.medium));
+    firstNameFocusNode.addListener(_onFirstNameFocusChange);
+    lastNameFocusNode.addListener(_onLastNameFocusChange);
+    phoneFocusNode.addListener(_onPhoneFocusChange);
+    zipCodeFocusNode.addListener(_onZipCodeFocusChange);
   }
 
   @override
   void dispose() {
     _emailController.dispose();
-    _passwordController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _phoneController.dispose();
+    _zipCodeController.dispose();
     super.dispose();
   }
   /////////////////////////

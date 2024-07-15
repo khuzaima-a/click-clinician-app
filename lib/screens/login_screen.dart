@@ -8,6 +8,7 @@
 
 import 'package:clickclinician/screens/signup_screen.dart';
 import 'package:clickclinician/widgets/snack_bar_notification.dart';
+import 'package:clickclinician/widgets/web_viiew.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:clickclinician/utility/color_file.dart';
@@ -36,7 +37,7 @@ class LoginState extends State<LoginScreen> {
 
   bool _isLoading = false;
   bool hidePassword = true;
-  int userType = 1;
+  int userType = 2;
   final FocusNode passwordFocusNode = FocusNode();
   Color passwordFillColor = ColorsUI.backgroundColor;
   Color passwordIconColor = ColorsUI.lightHeading;
@@ -117,31 +118,6 @@ class LoginState extends State<LoginScreen> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              if (userType == 2) {
-                                setState(() {
-                                  userType = 1;
-                                });
-                              }
-                            },
-                            child: Container(
-                              width: (displayWidth(context) - 108) * 0.5,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: userType == 1
-                                    ? ColorsUI.primaryColor
-                                    : Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                "Agency",
-                                style: userType == 1
-                                    ? CustomStyles.paragraphWhite
-                                    : CustomStyles.paragraphPrimary,
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
                               if (userType == 1) {
                                 setState(
                                   () {
@@ -169,7 +145,32 @@ class LoginState extends State<LoginScreen> {
                                 ],
                               ),
                             ),
-                          )
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              if (userType == 2) {
+                                setState(() {
+                                  userType = 1;
+                                });
+                              }
+                            },
+                            child: Container(
+                              width: (displayWidth(context) - 108) * 0.5,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: userType == 1
+                                    ? ColorsUI.primaryColor
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                "Agency",
+                                style: userType == 1
+                                    ? CustomStyles.paragraphWhite
+                                    : CustomStyles.paragraphPrimary,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -298,10 +299,21 @@ class LoginState extends State<LoginScreen> {
                             MaterialPageRoute(
                                 builder: (context) => SignupScreen()));
                       },
-                      child: const Text(
-                        "Create an account",
-                        style: TextStyle(
-                            color: ColorsUI.primaryColor, fontSize: 16),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  WebViewScreen(url: 'https://secure.clickclinician.com/onboarding'),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          "Create an account",
+                          style: TextStyle(
+                              color: ColorsUI.primaryColor, fontSize: 16),
+                        ),
                       ),
                     ),
                   ),

@@ -23,13 +23,15 @@ class DesignWidgets {
       Color backgroundColor = ColorsUI.primaryColor,
       Color foregroundColor = Colors.white,
       double borderRadios = 12.0,
+      Color? borderColor,
       double margin = 0,
       bool disabled = false,
-      bool isLoading = false}) {
+      bool isLoading = false,
+      bool elevate = true}) {
     return Container(
       margin: margin > 0 ? EdgeInsets.all(margin) : null,
       width: double.infinity,
-      decoration: BoxDecoration(
+      decoration: elevate ? BoxDecoration(
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.2),
@@ -38,7 +40,7 @@ class DesignWidgets {
             offset: const Offset(4, 4),
           ),
         ],
-      ),
+      ) : const BoxDecoration(),
       child: ElevatedButton(
         onPressed: disabled ? () {} : onTap,
         style: ElevatedButton.styleFrom(
@@ -47,6 +49,9 @@ class DesignWidgets {
           padding: const EdgeInsets.symmetric(vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadios),
+            side: borderColor != null
+                ? BorderSide(color: borderColor, width: 1.0)
+                : BorderSide.none,
           ),
         ),
         child: !isLoading
@@ -322,8 +327,8 @@ class DesignWidgets {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: isMapScreen
-                          ? const Icon(Icons.menu_open_sharp, color: Colors.white,
-                              size: 16)
+                          ? const Icon(Icons.menu_open_sharp,
+                              color: Colors.white, size: 16)
                           : const Icon(Icons.arrow_back_ios_new_rounded,
                               color: Colors.white, size: 16),
                     ),
