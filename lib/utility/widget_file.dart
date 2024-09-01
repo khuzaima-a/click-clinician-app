@@ -381,6 +381,7 @@ class DesignWidgets {
     String message,
     String time,
     int unreadCount,
+    String shortNames,
   ) {
     return ListTile(
       leading: const Icon(
@@ -389,11 +390,24 @@ class DesignWidgets {
         size: 48,
       ),
       horizontalTitleGap: 12,
-      title: Text(
-        senderName,
-        style: TextStyle(fontWeight: FontWeight.bold),
+      title: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            senderName,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          addHorizontalSpace(8.0),
+          shortNames.isNotEmpty
+              ? Text(
+                  "($shortNames)",
+                  style: TextStyle(fontSize: 14.0),
+                )
+              : Container()
+        ],
       ),
-      subtitle: Text(message),
+      subtitle: Text(
+          message.length > 32 ? "${message.substring(0, 32)}..." : message),
       trailing: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -415,10 +429,9 @@ class DesignWidgets {
     );
   }
 
-  static Widget getChatScreenAppBar(BuildContext context, String name,
-      {String pageTitle = "",
-      bool isMapScreen = false,
-      GlobalKey<ScaffoldState>? scaffoldKey}) {
+  static Widget getChatScreenAppBar(
+      BuildContext context, String name, VoidCallback openDialog,
+      {bool isGroupChat = true}) {
     return Stack(
       children: [
         Container(
@@ -463,15 +476,114 @@ class DesignWidgets {
                           fontWeight: FontWeight.w500),
                     ),
                   ]),
-              const Icon(
-                Icons.more_vert_sharp,
-                color: Colors.white,
-                size: 24,
-              )
+              isGroupChat
+                  ? GestureDetector(
+                      onTap: openDialog,
+                      child: const Icon(
+                        Icons.expand_more_rounded,
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                    )
+                  : Container()
             ],
           ),
         ),
       ],
+    );
+  }
+
+  static Widget getParticipantDialog(
+      BuildContext context, List<String> participants) {
+    return Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20.0),
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24.0),
+      ),
+      child: Container(
+        height: displayHeight(context) * 0.4,
+        child: Column(
+          children: [
+            addVerticalSpace(16.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Group Members",
+                        style: CustomStyles.headingText,
+                        textAlign: TextAlign.center,
+                      ),
+                      addHorizontalSpace(12.0),
+                      Text(
+                        "(${participants.length})",
+                        style: TextStyle(
+                            fontSize: 16.0, color: ColorsUI.lightHeading),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Align(
+                      alignment: Alignment.topRight,
+                      child: Icon(
+                        Icons.cancel,
+                        color: ColorsUI.primaryColor,
+                        size: 26.0,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            addVerticalSpace(12.0),
+            Divider(),
+            addVerticalSpace(12.0),
+            Expanded(
+              child: Scrollbar(
+                thumbVisibility: true,
+                trackVisibility: true,
+                child: ListView.builder(
+                  itemCount: participants.length,
+                  itemBuilder: (context, index) {
+                    final participant = participants[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 12.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.account_circle_rounded,
+                            color: ColorsUI.primaryColor,
+                            size: 32,
+                          ),
+                          addHorizontalSpace(12.0),
+                          Text(
+                            participant,
+                            style: const TextStyle(
+                                fontSize: 16.0, color: ColorsUI.headingColor),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            addVerticalSpace(16.0),
+          ],
+        ),
+      ),
     );
   }
 }

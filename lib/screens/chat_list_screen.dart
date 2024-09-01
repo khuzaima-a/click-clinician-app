@@ -86,27 +86,29 @@ class ChatListScreenState extends State<ChatListScreen> {
                   : chatRooms.isEmpty
                       ? Center(child: Text("No chats available"))
                       : Padding(
-                        padding: const EdgeInsets.only(top: 12.0),
-                        child: ListView.separated(
+                          padding: const EdgeInsets.only(top: 12.0),
+                          child: ListView.separated(
                             itemCount: chatRooms.length,
                             separatorBuilder: (context, index) => Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 6.0),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 6.0),
                               child: DesignWidgets.divider(),
                             ),
                             itemBuilder: (context, index) {
                               String lastMessage = "";
                               int unreadCount = 0;
-                              String bubbleName;
-                        
+                              String bubbleName = "";
+                              String shortNames = "";
+
                               final room = chatRooms[index];
-                        
+
                               if (room.lastMessage != null) {
                                 lastMessage = room.lastMessage.toString();
                               }
-                        
+
                               if (room.participantNames.length > 2) {
                                 bubbleName = "Group Chat";
-                                lastMessage = getShortParticipantList(
+                                shortNames = getShortParticipantList(
                                     room.participantNames);
                               } else if (room.participantNames.length == 2) {
                                 final currentUserId =
@@ -126,27 +128,33 @@ class ChatListScreenState extends State<ChatListScreen> {
                                   bubbleName = "Unknown User";
                                 }
                               }
-                        
+
                               return GestureDetector(
                                   onTap: () => {
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) => ChatScreen(
-                                                    roomId: room.id,
-                                                    name: bubbleName,
-                                                    updateChatRooms:
-                                                        updateChatRooms)))
+                                                builder: (context) =>
+                                                    ChatScreen(
+                                                      roomId: room.id,
+                                                      name: bubbleName,
+                                                      updateChatRooms:
+                                                          updateChatRooms,
+                                                      participantNames:
+                                                          getParticipantNamesList(
+                                                              room.participantNames),
+                                                    )))
                                       },
                                   child: DesignWidgets.getChatBubble(
                                     bubbleName,
                                     lastMessage,
                                     _formatTimestamp(room.lastMessageTimestamp),
                                     unreadCount,
+                                    shortNames
                                   ));
                             },
                           ),
-                      ),
+                        ),
             ),
           ],
         ),
@@ -154,16 +162,38 @@ class ChatListScreenState extends State<ChatListScreen> {
     );
   }
 
+  List<String> getParticipantNamesList(Map<String, String> participantNames) {
+    List<String> names = participantNames.values.map((name) {
+      return name;
+    }).toList();
+
+    return names;
+  }
+
   String getShortParticipantList(Map<String, String> participantNames) {
     List<String> shortNames = participantNames.values.map((name) {
       return name.split(' ')[0];
     }).toList();
 
-    if (shortNames.length <= 4) {
-      return shortNames.join(', ');
-    } else {
-      return "${shortNames.take(4).join(', ')}...";
+    if (shortNames.isEmpty) {
+      return '';
     }
+
+    String result = shortNames[0];
+    int currentLength = result.length;
+
+    for (int i = 1; i < 3; i++) {
+      String nextName = ', ${shortNames[i]}';
+      if (currentLength + nextName.length <= 17) {
+        result += nextName;
+        currentLength += nextName.length;
+      } else {
+        result += '...';
+        break;
+      }
+    }
+
+    return result;
   }
 
   String _formatTimestamp(DateTime timestamp) {

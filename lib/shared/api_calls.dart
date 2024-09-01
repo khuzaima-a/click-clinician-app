@@ -641,7 +641,6 @@ class ApiCalls {
     String path = '/api/Chat/rooms?userId=$userId';
     final finalPath = Uri.parse(baseUrl + path);
     String validToken = _settings.getBearerToken();
-  print("Getting rooms-----------");
     try {
       final response = await http.get(
         finalPath,
@@ -650,7 +649,6 @@ class ApiCalls {
 
       if (response.statusCode >= 200 && response.statusCode <= 204) {
         final List<ChatRoom> chatRooms = ChatRoom.listFromJson(response.body);
-        print("Parsed ${chatRooms.length} chat rooms");
         chatRooms.sort((a, b) => b.lastMessageTimestamp.compareTo(a.lastMessageTimestamp));
         return chatRooms;
       } else {
@@ -674,7 +672,6 @@ class ApiCalls {
     required int take,
     required BuildContext context,
   }) async {
-    print("Getting messages-----------");
     final Uri url = Uri.parse(
         '$baseUrl/api/Chat/messages?skip=$skip&take=$take&chatRoomId=$chatRoomId');
     String bearerToken = _settings.getBearerToken();

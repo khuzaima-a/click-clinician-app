@@ -6,17 +6,21 @@ import 'package:clickclinician/utility/style_file.dart';
 import 'package:clickclinician/utility/widget_file.dart';
 import 'package:flutter/material.dart';
 
+
 import '../shared/api_calls.dart';
 
 class ChatScreen extends StatefulWidget {
   final String roomId;
   final String name;
+  final List<String> participantNames;
   final void Function(dynamic, dynamic) updateChatRooms;
+
   const ChatScreen(
       {super.key,
       required this.roomId,
       required this.name,
-      required this.updateChatRooms});
+      required this.updateChatRooms,
+      required this.participantNames});
 
   @override
   State<StatefulWidget> createState() => ChatScreenState();
@@ -127,6 +131,16 @@ class ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  void _openParticipantDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DesignWidgets.getParticipantDialog(
+            context, widget.participantNames);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -135,7 +149,9 @@ class ChatScreenState extends State<ChatScreen> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            DesignWidgets.getChatScreenAppBar(context, widget.name),
+            DesignWidgets.getChatScreenAppBar(
+                context, widget.name, _openParticipantDialog,
+                isGroupChat: widget.participantNames.length > 2),
             Expanded(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
@@ -176,7 +192,9 @@ class ChatScreenState extends State<ChatScreen> {
               ),
               child: TextField(
                 controller: _messageController,
-                keyboardType: TextInputType.text,
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                textInputAction: TextInputAction.newline,
                 decoration: InputDecoration(
                   hintText: "Enter your message here",
                   filled: true,
@@ -220,7 +238,7 @@ class ChatMessageWidget extends StatelessWidget {
     final bool isMe = message.senderId == id;
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
       child: Column(
         crossAxisAlignment:
             isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -241,21 +259,30 @@ class ChatMessageWidget extends StatelessWidget {
             mainAxisAlignment:
                 isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 15.0, vertical: 12.0),
-                decoration: BoxDecoration(
-                  color: isMe
-                      ? const Color.fromARGB(255, 220, 220, 220)
-                      : ColorsUI.primaryColor.withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(12.0),
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.8,
                 ),
-                child: Text(
-                  message.message,
-                  style: TextStyle(
-                    color: isMe ? Colors.black : Colors.white,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 15.0,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 15.0, vertical: 12.0),
+                  decoration: BoxDecoration(
+                    color: isMe
+                        // ? const Color.fromARGB(255, 220, 220, 220)
+                        ? Colors.blue.withOpacity(0.15)
+                        : ColorsUI.primaryColor.withOpacity(0.8),
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  child: Text(
+                    message.message,
+                    style: TextStyle(
+                      color: isMe ? Colors.black : Colors.white,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 15.0,
+                    ),
+                    softWrap: true,
+                    overflow: TextOverflow.visible,
+                    maxLines: null,
                   ),
                 ),
               ),

@@ -52,7 +52,7 @@ class StartupScreenState extends State<StartupScreen>
           MaterialPageRoute(builder: (context) => const LoginScreen()));
     } else {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => ChatListScreen()));
+          context, MaterialPageRoute(builder: (context) => MapScreen()));
     }
   }
 
