@@ -8,8 +8,13 @@
 
 import 'dart:convert';
 //import 'package:flutter/foundation.dart';
+import 'package:clickclinician/models/chatmessage.dart';
+import 'package:clickclinician/models/chatroom.dart';
+import 'package:clickclinician/models/review.dart';
+import 'package:clickclinician/screens/chat_screen.dart';
 import 'package:clickclinician/screens/login_screen.dart';
 import 'package:clickclinician/screens/map_screen.dart';
+import 'package:clickclinician/screens/ratings_screen.dart';
 import 'package:clickclinician/screens/service_request_screen.dart';
 import 'package:clickclinician/screens/startup_screen.dart';
 import 'package:clickclinician/screens/unauthorised_user_screen.dart';
@@ -32,7 +37,9 @@ class ApiCalls {
   //static String _baseUrl = 'http://localhost:6216';
   // static String _baseUrl = 'https://api.clickclinician.com';
   // static String _baseUrl = 'https://dev-clickapi.azurewebsites.net';
-  static String _baseUrl = 'https://clickclinician-live-api.azurewebsites.net';
+  // static String _baseUrl = 'https://clickclinician-live-api.azurewebsites.net';
+  static String _baseUrl =
+      "https://clickclinician-live-api-v2.azurewebsites.net";
 
   static String deviceToken = '';
   static bool? registeredDevice = _settings.getRegisteredDevice();
@@ -509,6 +516,7 @@ class ApiCalls {
   }
 
   static void registerDevice(DeviceToken deviceToken, context) async {
+    print(deviceToken);
     debugPrint('inside register data api call');
     var jsonToken = deviceToken.toJson();
     debugPrint('registered device call in api: $registeredDevice');
@@ -601,6 +609,137 @@ class ApiCalls {
     }
   }
 
+  static Future<List<Review>> getReviews({
+    required BuildContext context,
+  }) async {
+    String revieweeId = _settings.getUserId().toString();
+    final Uri url = Uri.parse('$baseUrl/api/Review/reviewee/$revieweeId');
+    String bearerToken = _settings.getBearerToken();
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonList = json.decode(response.body);
+        return Review.listFromJson(jsonList);
+      } else {
+        throw Exception('Failed to load reviews: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching reviews: $e');
+      return [];
+    }
+  }
+
+  static Future<List<ChatRoom>> getChatList(BuildContext context) async {
+    String userId = _settings.getUserId().toString();
+    String path = '/api/Chat/rooms?userId=$userId';
+    final finalPath = Uri.parse(baseUrl + path);
+    String validToken = _settings.getBearerToken();
+  print("Getting rooms-----------");
+    try {
+      final response = await http.get(
+        finalPath,
+        headers: {'Authorization': 'Bearer $validToken'},
+      );
+
+      if (response.statusCode >= 200 && response.statusCode <= 204) {
+        final List<ChatRoom> chatRooms = ChatRoom.listFromJson(response.body);
+        print("Parsed ${chatRooms.length} chat rooms");
+        chatRooms.sort((a, b) => b.lastMessageTimestamp.compareTo(a.lastMessageTimestamp));
+        return chatRooms;
+      } else {
+        print(
+            "Something is wrong-------------------------------${response.statusCode}");
+        Map<String, dynamic> jsonResponse = json.decode(response.body);
+        throw Exception(
+            'Failed to load chat rooms: ${jsonResponse['message']}');
+      }
+    } catch (error) {
+      print("Something is wrong-------------------------------");
+      print(error.toString());
+      showSnackBar(context, 'Something went wrong!', SnackbarColors.error);
+      throw error;
+    }
+  }
+
+  static Future<List<ChatMessage>> getChatMessages({
+    required String chatRoomId,
+    required int skip,
+    required int take,
+    required BuildContext context,
+  }) async {
+    print("Getting messages-----------");
+    final Uri url = Uri.parse(
+        '$baseUrl/api/Chat/messages?skip=$skip&take=$take&chatRoomId=$chatRoomId');
+    String bearerToken = _settings.getBearerToken();
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonList = json.decode(response.body);
+        return ChatMessage.listFromJson(jsonList);
+      } else {
+        throw Exception('Failed to load chat messages: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching chat messages: $e');
+      // You might want to show a snackbar or some other error message to the user here
+      return [];
+    }
+  }
+
+  static Future<void> sendMessage({
+    required String chatRoomId,
+    required String senderId,
+    required String receiverId,
+    required String message,
+    required BuildContext context,
+  }) async {
+    final url = Uri.parse('$baseUrl/api/Chat/send');
+    final bearerToken = _settings.getBearerToken();
+
+
+    final body = jsonEncode({
+      'chatRoomId': chatRoomId,
+      'senderId': senderId,
+      'receiverId': receiverId,
+      'message': message,
+    });
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $bearerToken',
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        print('Message sent successfully');
+      } else {
+        print('Failed to send message. Status code: ${response.statusCode}');
+        throw Exception('Failed to send message');
+      }
+    } catch (e) {
+      print('Error sending message: $e');
+      throw e;
+    }
+  }
+
   static Future<void> fetchUserInfo(context,
       {String? token, Function(bool)? onChangedCallback}) async {
     onChangedCallback!(true);
@@ -615,6 +754,7 @@ class ApiCalls {
       if (response.statusCode >= 200 && response.statusCode <= 204) {
         final responseData = jsonDecode(response.body);
         // showSnackBar(context, responseData['sub'], SnackbarColors.test);
+        print("User is ${responseData}");
         _setUserId(responseData['sub']);
         _setUserName(responseData['user_display_name']);
         _setUserRole(responseData['role']);

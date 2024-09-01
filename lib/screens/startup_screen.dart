@@ -6,7 +6,10 @@
 // <date>MAY 29, 2023</date>
 /////////////////////////////////////////////////////////
 
+import 'package:clickclinician/screens/chat_list_screen.dart';
+import 'package:clickclinician/screens/chat_screen.dart';
 import 'package:clickclinician/screens/legal_screen.dart';
+import 'package:clickclinician/screens/ratings_screen.dart';
 import 'package:clickclinician/screens/service_request_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +21,6 @@ import 'profile_screen.dart';
 
 class StartupScreen extends StatefulWidget {
   const StartupScreen({super.key});
-
 
   @override
   State<StartupScreen> createState() => StartupScreenState();
@@ -49,8 +51,8 @@ class StartupScreenState extends State<StartupScreen>
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => const LoginScreen()));
     } else {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const MapScreen()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => ChatListScreen()));
     }
   }
 

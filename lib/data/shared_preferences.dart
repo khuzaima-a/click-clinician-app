@@ -19,6 +19,7 @@ class SPSettings {
   final String _keyChangeCode = 'changeCode';
   final String _keyUserId = 'userId';
   final String _keyUsername = 'userName';
+  final String _keyUserrole = 'userRole';
   final String _keyPassword = 'password';
   final String _keyBearerToken = 'bearerToken';
   final String _keyRefreshToken = 'refreshToken';
@@ -68,11 +69,11 @@ class SPSettings {
   }
 
   Future setUserRole(String userRole) async {
-    await _sharedPreferences.setString(_keyUsername, userRole);
+    await _sharedPreferences.setString(_keyUserrole, userRole);
   }
 
   String? getUserRole() {
-    return _sharedPreferences.getString(_keyUsername);
+    return _sharedPreferences.getString(_keyUserrole);
   }
 
   Future setPassword(String password) async {

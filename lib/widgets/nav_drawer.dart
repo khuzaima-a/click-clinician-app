@@ -7,11 +7,13 @@
 /////////////////////////////////////////////////////////
 
 import 'package:clickclinician/data/shared_preferences.dart';
+import 'package:clickclinician/screens/chat_list_screen.dart';
+import 'package:clickclinician/screens/ratings_screen.dart';
 import 'package:flutter/material.dart';
 
 import "../utility/utils.dart";
 import '../screens/legal_screen.dart';
-import '../screens/map_screen.dart';
+import '../screens/chat_screen.dart';
 import "../utility/widget_file.dart";
 
 import '../screens/profile_screen.dart';
@@ -24,8 +26,11 @@ class NavDrawer extends StatelessWidget {
   const NavDrawer({super.key});
   static final SPSettings _settings = SPSettings();
 
+  
+
   @override
   Widget build(BuildContext context) {
+    print(_settings.getUserName());
     return Drawer(
       backgroundColor: Colors.white,
       width: displayWidth(context) * 0.80,
@@ -44,7 +49,6 @@ class NavDrawer extends StatelessWidget {
                 child: Column(
                   children: [
                     DesignWidgets.divider(),
-                    
                     DesignWidgets.profileItem(
                       "My Service Requests",
                       "assets/images/services.svg",
@@ -54,6 +58,19 @@ class NavDrawer extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ServiceRequestsScreen()));
+                          
+                      },
+                    ),
+                    DesignWidgets.divider(),
+                    DesignWidgets.profileItem(
+                      "Chats",
+                      "",
+                      Icons.chat,
+                      () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ChatListScreen()));
                       },
                     ),
                     DesignWidgets.divider(),
@@ -66,6 +83,19 @@ class NavDrawer extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ProfileScreen()));
+                      },
+                    ),
+                    DesignWidgets.divider(),
+                    DesignWidgets.profileItem(
+                      "Ratings",
+                      "",
+                      Icons.star_outline,
+                      () {
+                        
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ClinicianReview()));
                       },
                     ),
                     DesignWidgets.divider(),

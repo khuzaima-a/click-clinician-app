@@ -115,7 +115,7 @@ class ClickDeviceInfo {
 
   Map<String, dynamic> _readAndroidBuildData(AndroidDeviceInfo build) {
     final generatedDeviceKey = generateDeviceKey();
-    debugPrint('generatedDeviceKey in andorid: $generatedDeviceKey');
+    debugPrint('generatedDeviceKey in android: $generatedDeviceKey');
     return <String, dynamic>{
       'version.securityPatch': build.version.securityPatch,
       'version.sdkInt': build.version.sdkInt,
@@ -143,23 +143,14 @@ class ClickDeviceInfo {
       'type': build.type,
       'isPhysicalDevice': build.isPhysicalDevice,
       'systemFeatures': build.systemFeatures,
-      'displaySizeInches':
-          ((build.displayMetrics.sizeInches * 10).roundToDouble() / 10),
-      'displayWidthPixels': build.displayMetrics.widthPx,
-      'displayWidthInches': build.displayMetrics.widthInches,
-      'displayHeightPixels': build.displayMetrics.heightPx,
-      'displayHeightInches': build.displayMetrics.heightInches,
-      'displayXDpi': build.displayMetrics.xDpi,
-      'displayYDpi': build.displayMetrics.yDpi,
       'serialNumber': generatedDeviceKey,
-      // 'serialNumber': build.serialNumber,
     };
   }
 
   Map<String, dynamic> _readIosDeviceInfo(IosDeviceInfo data) {
     print(
         '_readIosDeviceInfo:====================================================== $data <====');
-    
+
     return <String, dynamic>{
       'name': data.name,
       'systemName': data.systemName,
@@ -175,7 +166,6 @@ class ClickDeviceInfo {
       'utsname.version:': data.utsname.version,
       'utsname.machine:': data.utsname.machine,
       'version.release': data.systemVersion,
-
     };
   }
 

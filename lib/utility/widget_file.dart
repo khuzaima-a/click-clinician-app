@@ -1,3 +1,4 @@
+import 'package:clickclinician/screens/map_screen.dart';
 import 'package:clickclinician/utility/style_file.dart';
 import 'package:clickclinician/utility/utils.dart';
 import 'package:flutter/material.dart';
@@ -31,16 +32,18 @@ class DesignWidgets {
     return Container(
       margin: margin > 0 ? EdgeInsets.all(margin) : null,
       width: double.infinity,
-      decoration: elevate ? BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(4, 4),
-          ),
-        ],
-      ) : const BoxDecoration(),
+      decoration: elevate
+          ? BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 5,
+                  offset: const Offset(4, 4),
+                ),
+              ],
+            )
+          : const BoxDecoration(),
       child: ElevatedButton(
         onPressed: disabled ? () {} : onTap,
         style: ElevatedButton.styleFrom(
@@ -91,7 +94,7 @@ class DesignWidgets {
           ),
           addVerticalSpace(8),
           Text(
-            "Hello ${name.split(" ").first}!",
+            "Hello ${name.split(" ").first}",
             style: CustomStyles.headingText,
           ),
           addVerticalSpace(32),
@@ -315,9 +318,11 @@ class DesignWidgets {
               children: [
                 GestureDetector(
                   onTap: () {
-                    isMapScreen
-                        ? scaffoldKey!.currentState?.openDrawer()
-                        : Navigator.of(context).pop();
+                    if (isMapScreen) {
+                      scaffoldKey!.currentState?.openDrawer();
+                    } else {
+                      Navigator.of(context).pop();
+                    }
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -365,6 +370,105 @@ class DesignWidgets {
               color: Color.fromARGB(75, 255, 255, 255),
               shape: BoxShape.circle,
             ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  static Widget getChatBubble(
+    String senderName,
+    String message,
+    String time,
+    int unreadCount,
+  ) {
+    return ListTile(
+      leading: const Icon(
+        Icons.account_circle_rounded,
+        color: ColorsUI.primaryColor,
+        size: 48,
+      ),
+      horizontalTitleGap: 12,
+      title: Text(
+        senderName,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      subtitle: Text(message),
+      trailing: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(time, style: TextStyle(fontSize: 12, color: Colors.grey)),
+          if (unreadCount > 0)
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: const BoxDecoration(
+                color: ColorsUI.primaryColor,
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                unreadCount.toString(),
+                style: const TextStyle(color: Colors.white, fontSize: 12),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  static Widget getChatScreenAppBar(BuildContext context, String name,
+      {String pageTitle = "",
+      bool isMapScreen = false,
+      GlobalKey<ScaffoldState>? scaffoldKey}) {
+    return Stack(
+      children: [
+        Container(
+          width: displayWidth(context),
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+          decoration: const BoxDecoration(
+            color: ColorsUI.primaryColor,
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(20),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.25),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Icon(Icons.arrow_back_ios_new_rounded,
+                              color: Colors.white, size: 16),
+                        ),
+                      ),
+                    ),
+                    DesignWidgets.addHorizontalSpace(16.0),
+                    Text(
+                      name,
+                      style: const TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ]),
+              const Icon(
+                Icons.more_vert_sharp,
+                color: Colors.white,
+                size: 24,
+              )
+            ],
           ),
         ),
       ],

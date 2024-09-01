@@ -106,7 +106,9 @@ class MapScreenState extends State<MapScreen> {
           altitude: 0,
           heading: 0,
           speed: 0,
-          speedAccuracy: 0);
+          speedAccuracy: 0,
+          headingAccuracy: 0,
+          altitudeAccuracy: 0);
     }
 
     return await _geolocatorPlatform.getCurrentPosition(
