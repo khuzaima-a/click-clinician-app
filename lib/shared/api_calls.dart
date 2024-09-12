@@ -17,6 +17,7 @@ import 'package:clickclinician/screens/map_screen.dart';
 import 'package:clickclinician/screens/ratings_screen.dart';
 import 'package:clickclinician/screens/service_request_screen.dart';
 import 'package:clickclinician/screens/startup_screen.dart';
+import 'package:clickclinician/screens/two_factor_authentication_screen.dart';
 import 'package:clickclinician/screens/unauthorised_user_screen.dart';
 import 'package:clickclinician/shared/models/accepted_service_req.dart';
 import 'package:clickclinician/widgets/snack_bar_notification.dart';
@@ -561,54 +562,6 @@ class ApiCalls {
     }
   }
 
-  static Future<String> login(String username, String password, context,
-      Function(bool) onChangedCallback) async {
-    onChangedCallback(true);
-    const String path = '/connect/token';
-    final tokenEndpoint = Uri.parse(baseUrl + path);
-    final requestBody = {
-      'grant_type': 'password',
-      'client_id': 'owner',
-      'client_secret': 'fancyawesome',
-      'username': username,
-      'password': password,
-    };
-
-    try {
-      final response = await http.post(
-        tokenEndpoint,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: requestBody,
-      );
-
-      if (response.statusCode >= 200 && response.statusCode <= 204) {
-        final responseData = jsonDecode(response.body);
-        _setBearerToken(responseData['access_token']);
-        _setRefreshToken(responseData['refresh_token']);
-        onChangedCallback(false);
-        fetchUserInfo(context,
-            token: responseData['access_token'],
-            onChangedCallback: onChangedCallback);
-        print(bearerToken);
-        return bearerToken;
-      } else {
-        // Handle request failure
-        // For example, you could log the error or throw an exception
-        Map<String, dynamic> jsonResponse = json.decode(response.body);
-        String errorDescription =
-            jsonResponse['error_description'] ?? 'Unknown Error';
-        showSnackBar(context, errorDescription, SnackbarColors.error);
-        onChangedCallback(false);
-        return '';
-      }
-    } catch (error) {
-      print(error.toString());
-      showSnackBar(context, 'Something went wrong!', SnackbarColors.error);
-      onChangedCallback(false);
-      return '';
-    }
-  }
-
   static Future<List<Review>> getReviews({
     required BuildContext context,
   }) async {
@@ -649,7 +602,8 @@ class ApiCalls {
 
       if (response.statusCode >= 200 && response.statusCode <= 204) {
         final List<ChatRoom> chatRooms = ChatRoom.listFromJson(response.body);
-        chatRooms.sort((a, b) => b.lastMessageTimestamp.compareTo(a.lastMessageTimestamp));
+        chatRooms.sort(
+            (a, b) => b.lastMessageTimestamp.compareTo(a.lastMessageTimestamp));
         return chatRooms;
       } else {
         print(
@@ -707,7 +661,6 @@ class ApiCalls {
     final url = Uri.parse('$baseUrl/api/Chat/send');
     final bearerToken = _settings.getBearerToken();
 
-
     final body = jsonEncode({
       'chatRoomId': chatRoomId,
       'senderId': senderId,
@@ -737,7 +690,52 @@ class ApiCalls {
     }
   }
 
-  static Future<void> fetchUserInfo(context,
+  static Future<String> login(String username, String password,
+      BuildContext context, Function(bool) onChangedCallback) async {
+    onChangedCallback(true);
+    const String path = '/connect/token';
+    final tokenEndpoint = Uri.parse(baseUrl + path);
+    final requestBody = {
+      'grant_type': 'password',
+      'client_id': 'owner',
+      'client_secret': 'fancyawesome',
+      'username': username,
+      'password': password,
+    };
+
+    try {
+      final response = await http.post(
+        tokenEndpoint,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: requestBody,
+      );
+
+      if (response.statusCode >= 200 && response.statusCode <= 204) {
+        final responseData = jsonDecode(response.body);
+        final accessToken = responseData['access_token'];
+
+        // Don't save tokens yet, fetch user info first
+        await fetchUserInfo(context,
+            token: accessToken, onChangedCallback: onChangedCallback);
+
+        return accessToken;
+      } else {
+        Map<String, dynamic> jsonResponse = json.decode(response.body);
+        String errorDescription =
+            jsonResponse['error_description'] ?? 'Unknown Error';
+        showSnackBar(context, errorDescription, SnackbarColors.error);
+        onChangedCallback(false);
+        return '';
+      }
+    } catch (error) {
+      print(error.toString());
+      showSnackBar(context, 'Something went wrong!', SnackbarColors.error);
+      onChangedCallback(false);
+      return '';
+    }
+  }
+
+  static Future<void> fetchUserInfo(BuildContext context,
       {String? token, Function(bool)? onChangedCallback}) async {
     onChangedCallback!(true);
     String path = "/connect/userinfo";
@@ -750,28 +748,111 @@ class ApiCalls {
       print("response.statusCode Fetch => ${response.statusCode}");
       if (response.statusCode >= 200 && response.statusCode <= 204) {
         final responseData = jsonDecode(response.body);
-        // showSnackBar(context, responseData['sub'], SnackbarColors.test);
-        print("User is ${responseData}");
-        _setUserId(responseData['sub']);
-        _setUserName(responseData['user_display_name']);
-        _setUserRole(responseData['role']);
-        if (responseData['role'] == 'Clinician') {
-          whoami(context, userid: responseData['sub']);
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const MapScreen()));
-        } else {
+        print("User is $responseData");
+        if (responseData['two_factor_enabled'] == "true") {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const UnauthorisedUserScreen()));
+            context,
+            MaterialPageRoute(
+              builder: (context) => TwoFactorAuthScreen(
+                userId: responseData["sub"],
+                onVerificationSuccess: () {
+                  _saveUserData(responseData, validToken);
+                  _navigateBasedOnRole(
+                      context, responseData['role'], responseData["sub"]);
+                },
+              ),
+            ),
+          );
+        } else {
+          _saveUserData(responseData, validToken);
+          _navigateBasedOnRole(
+              context, responseData['role'], responseData["sub"]);
         }
+
         onChangedCallback(false);
         print('data fetched successfully! $responseData');
-        // return response;
       }
     } catch (e) {
       onChangedCallback(false);
       print('error while fetching user info: $e');
+      showSnackBar(context, 'Error fetching user info', SnackbarColors.error);
+    }
+  }
+
+  static void _saveUserData(Map<String, dynamic> userData, String token) {
+    _setBearerToken(token);
+    _setRefreshToken(
+        token); // You might want to handle refresh token separately
+    _setUserId(userData['sub']);
+    _setUserName(userData['user_display_name']);
+    _setUserRole(userData['role']);
+  }
+
+  static void _navigateBasedOnRole(
+      BuildContext context, String role, String userId) {
+    if (role == 'Clinician') {
+      whoami(context, userid: userId);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const MapScreen()),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const UnauthorisedUserScreen()),
+      );
+    }
+  }
+
+  static Future<bool> verifyTwoFactorCode(String userId, String code) async {
+    print("Verify code called");
+    const String path = "/api/TwoFactorAuth/verify-code";
+
+    try {
+      final response = await http.post(
+        Uri.parse(baseUrl + path),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'userId': userId, 'code': code}),
+      );
+
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        print("Error: ${response.reasonPhrase}");
+        return false;
+      }
+    } catch (e) {
+      print("Exception occurred: $e");
+      return false;
+    }
+  }
+
+  static Future<bool> sendTwoFactorCode(String userId) async {
+    print("Send code called");
+    const String path = "/api/TwoFactorAuth/send-code";
+
+    try {
+      final response = await http.post(
+        Uri.parse(baseUrl + path),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(userId),
+      );
+
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        print("Error: ${response.reasonPhrase}");
+        return false;
+      }
+    } catch (e) {
+      print("Exception occurred: $e");
+      return false;
     }
   }
 

@@ -8,9 +8,11 @@
 
 import 'dart:async';
 import 'dart:ui';
+import 'package:clickclinician/screens/chat_list_screen.dart';
 import 'package:clickclinician/screens/service_req_tabs_screen.dart';
 import 'package:clickclinician/shared/firebase.dart';
 import 'package:clickclinician/shared/notifications_services.dart';
+import 'package:clickclinician/utility/color_file.dart';
 import 'package:clickclinician/utility/utils.dart';
 import 'package:clickclinician/utility/widget_file.dart';
 import 'package:clickclinician/widgets/popup_menus.dart';
@@ -244,173 +246,174 @@ class MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<CameraPosition>(
-        future: fetchData(context),
-        builder:
-            (BuildContext context, AsyncSnapshot<CameraPosition> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              backgroundColor: Colors.white,
-              body: const Center(
-                child: CircularProgressIndicator(),
-              ),
-            ); // Display a loading indicator
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}'); // Display an error message
-          } else {
-            CameraPosition? cameraPosition = snapshot.data;
+      future: fetchData(context),
+      builder: (BuildContext context, AsyncSnapshot<CameraPosition> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            backgroundColor: Colors.white,
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          CameraPosition? cameraPosition = snapshot.data;
 
-            return SafeArea(
-              child: Scaffold(
-                key: _scaffoldKey,
-                // floatingActionButton: ElevatedButton(
-                //   style: ElevatedButton.styleFrom(
-                //       backgroundColor: Colors.lightBlue,
-                //       foregroundColor: Colors.white),
-                //   onPressed: () {
-                //     Navigator.push(
-                //         context,
-                //         MaterialPageRoute(
-                //             builder: (context) => ServiceRequestsScreen()));
-                //   },
-                //   child: const Text('Service Requests'),
-                // ),
-                // floatingActionButtonLocation:
-                //     FloatingActionButtonLocation.centerFloat,
-                backgroundColor: Colors.white,
-                drawer: _navigationBar,
-                body: SingleChildScrollView(
-                  child: Stack(
-                    children: [
-                      SizedBox(
-                        width: double.infinity,
-                        height: MediaQuery.of(context).size.height -
-                            MediaQuery.of(context).padding.top,
-                        child: GoogleMap(
-                          mapType: MapType.terrain,
-                          initialCameraPosition:
-                              cameraPosition ?? _cameraDefault,
-                          myLocationButtonEnabled: true,
-                          gestureRecognizers: <Factory<
-                              OneSequenceGestureRecognizer>>{
-                            Factory<OneSequenceGestureRecognizer>(
-                              () => EagerGestureRecognizer(),
-                            ),
-                          },
-                          onMapCreated: (GoogleMapController controller) {
-                            _mapController = controller;
-                            _mapController.setMapStyle(_mapStyleString);
-                          },
-                          markers: Set<Marker>.of(_markers),
-                          circles: Set<Circle>.of(_circles),
-                          compassEnabled: true,
-                          onTap: (val) {
-                            print('value in map screen press: $val');
-                          },
-                          myLocationEnabled: true,
-                        ),
+          return SafeArea(
+            child: Scaffold(
+              key: _scaffoldKey,
+              backgroundColor: Colors.white,
+              drawer: _navigationBar,
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ChatListScreen()),
+                  );
+                },
+                child: const Icon(
+                  Icons.chat,
+                  color: Colors.white,
+                ),
+                backgroundColor: ColorsUI.primaryColor,
+              ),
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.endFloat,
+              body: SingleChildScrollView(
+                child: Stack(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height -
+                          MediaQuery.of(context).padding.top,
+                      child: GoogleMap(
+                        mapType: MapType.terrain,
+                        initialCameraPosition: cameraPosition ?? _cameraDefault,
+                        myLocationButtonEnabled: true,
+                        zoomControlsEnabled: false,
+                        gestureRecognizers: <Factory<
+                            OneSequenceGestureRecognizer>>{
+                          Factory<OneSequenceGestureRecognizer>(
+                            () => EagerGestureRecognizer(),
+                          ),
+                        },
+                        onMapCreated: (GoogleMapController controller) {
+                          _mapController = controller;
+                          _mapController.setMapStyle(_mapStyleString);
+                        },
+                        markers: Set<Marker>.of(_markers),
+                        circles: Set<Circle>.of(_circles),
+                        compassEnabled: true,
+                        onTap: (val) {
+                          print('value in map screen press: $val');
+                        },
+                        myLocationEnabled: true,
                       ),
-                      Positioned(
-                        top: 24,
-                        left: 16,
-                        child: GestureDetector(
-                          onTap: () {
-                            _scaffoldKey.currentState!.openDrawer();
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.25),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Icon(Icons.menu_open_sharp,
-                                  color: Colors.white, size: 20),
-                            ),
+                    ),
+                    Positioned(
+                      top: 24,
+                      left: 16,
+                      child: GestureDetector(
+                        onTap: () {
+                          _scaffoldKey.currentState!.openDrawer();
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.25),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Icon(Icons.menu_open_sharp,
+                                color: Colors.white, size: 20),
                           ),
                         ),
                       ),
-                      Positioned(
-                        bottom: 32,
-                        left: 16,
-                        child: Column(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                _setCamera(_cameraAustin);
-                              },
-                              child: Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.25),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    "Au",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                    ),
+                    Positioned(
+                      bottom: 32,
+                      left: 16,
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              _setCamera(_cameraAustin);
+                            },
+                            child: Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.25),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  "Au",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
-                            DesignWidgets.addVerticalSpace(12.0),
-                            GestureDetector(
-                              onTap: () {
-                                _setCamera(_cameraSanAntonio);
-                              },
-                              child: Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.25),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    "SA",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                          ),
+                          DesignWidgets.addVerticalSpace(12.0),
+                          GestureDetector(
+                            onTap: () {
+                              _setCamera(_cameraSanAntonio);
+                            },
+                            child: Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.25),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  "SA",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
-                            DesignWidgets.addVerticalSpace(12.0),
-                            GestureDetector(
-                              onTap: () {
-                                _setCamera(_cameraVictoria);
-                              },
-                              child: Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.25),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    "Vic",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                          ),
+                          DesignWidgets.addVerticalSpace(12.0),
+                          GestureDetector(
+                            onTap: () {
+                              _setCamera(_cameraVictoria);
+                            },
+                            child: Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.25),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  "Vic",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            );
-          }
-        });
+            ),
+          );
+        }
+      },
+    );
   }
 }

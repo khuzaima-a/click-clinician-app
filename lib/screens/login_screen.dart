@@ -97,85 +97,7 @@ class LoginState extends State<LoginScreen> {
                       Text("Welcome back!", style: CustomStyles.headingText),
                     ],
                   ),
-                  DesignWidgets.addVerticalSpace(24),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Container(
-                      height: 48,
-                      width: displayWidth(context) - 96,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: ColorsUI.primaryColor,
-                          style: BorderStyle.solid,
-                          width: 1,
-                        ),
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.all(2),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              if (userType == 1) {
-                                setState(
-                                  () {
-                                    userType = 2;
-                                  },
-                                );
-                              }
-                            },
-                            child: Container(
-                              width: (displayWidth(context) - 108) * 0.5,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: userType == 2
-                                    ? ColorsUI.primaryColor
-                                    : Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text("Clinician",
-                                      style: userType == 2
-                                          ? CustomStyles.paragraphWhite
-                                          : CustomStyles.paragraphPrimary),
-                                ],
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              if (userType == 2) {
-                                setState(() {
-                                  userType = 1;
-                                });
-                              }
-                            },
-                            child: Container(
-                              width: (displayWidth(context) - 108) * 0.5,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: userType == 1
-                                    ? ColorsUI.primaryColor
-                                    : Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                "Agency",
-                                style: userType == 1
-                                    ? CustomStyles.paragraphWhite
-                                    : CustomStyles.paragraphPrimary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  DesignWidgets.addVerticalSpace(24),
+                  DesignWidgets.addVerticalSpace(32),
                   Text(
                     "Email Address",
                     style: CustomStyles.subHeadingText,
@@ -304,8 +226,9 @@ class LoginState extends State<LoginScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  WebViewScreen(url: 'https://secure.clickclinician.com/onboarding'),
+                              builder: (context) => WebViewScreen(
+                                  url:
+                                      'https://secure.clickclinician.com/onboarding'),
                             ),
                           );
                         },
